@@ -90,13 +90,15 @@ namespace IVA.FindExpert.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, CustomRole,
     long, CustomUserLogin, CustomUserRole, CustomUserClaim>
     {
-        public ApplicationDbContext() : base("DefaultConnection")
+        public ApplicationDbContext() : base(Common.Constant.OWIN_DB_CONNECTION)
         {
         }
 
         public static ApplicationDbContext Create()
         {
-            return new ApplicationDbContext();
+            var context = new ApplicationDbContext();
+            //context.Database.Initialize(true); Force OWIN table creation
+            return context;
         }
     }
 }

@@ -18,5 +18,7 @@ namespace IVA.DTO
         public bool PasswordValidated { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
+
+        public virtual UserProfile Profile { get; set; }
     }
 }

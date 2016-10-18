@@ -23,5 +23,7 @@ namespace IVA.DTO
         public decimal Vehiclevalue { get; set; }
         public string VehicleNo { get; set; }
         public int Status { get; set; }
+
+        virtual public List<VehicleImage> Images { get; set; }
     }
 }

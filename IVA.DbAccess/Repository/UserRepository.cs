@@ -20,6 +20,13 @@ namespace IVA.DbAccess.Repository
             return context.Users.Where(u => UserName.Equals(u.UserName)).FirstOrDefault();
         }
 
+        public IUser GetByUserNameAndPassword(string UserName, string Password)
+        {
+            UserName = UserName.Trim();
+            return context.Users.Where(u => UserName.Equals(u.UserName) && 
+                                        u.Password.Equals(Password)).FirstOrDefault();
+        }
+
         public IUser GetByLoginId(long LoginId)
         {
             return context.Users.Where(u => u.LoginId == LoginId).FirstOrDefault();

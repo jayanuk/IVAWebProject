@@ -13,5 +13,6 @@ namespace IVA.DTO
         public long SRId { get; set; }
         public DateTime Date { get; set; }
         public byte[] ImageBytes { get; set; }
+        public int? Order { get; set; }
     }
 }

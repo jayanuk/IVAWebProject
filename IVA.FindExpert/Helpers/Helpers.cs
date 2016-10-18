@@ -10,7 +10,7 @@ public class Utiliti
     public static int GenerateRandomNumber()
     {
         Random r = new Random();
-        int rnd = r.Next(1000, 10000);
+        int rnd = r.Next(100000, 1000000);
         return rnd;
     }    
 
@@ -23,8 +23,9 @@ public class Utiliti
     public static async Task SendMessage(string Phone, string Message)
     {
         var smsGateway = ConfigurationManager.AppSettings[Constant.ConfigurationKeys.SMS_GatewayURL];
-        
-        using (var stringContent = new StringContent("destination=" + Phone + "&q=14244175226571&message=" + Message,
+        var authCode = ConfigurationManager.AppSettings[Constant.ConfigurationKeys.SMS_GatewayAuthCode];
+
+        using (var stringContent = new StringContent("destination=" + Phone + "&q=" + authCode + "&message=" + Message,
                                                         System.Text.Encoding.UTF8, "application/x-www-form-urlencoded"))
         using (var client = new HttpClient())
         {
@@ -36,7 +37,6 @@ public class Utiliti
             }
             catch (Exception ex)
             {
-
             }
         }
     }

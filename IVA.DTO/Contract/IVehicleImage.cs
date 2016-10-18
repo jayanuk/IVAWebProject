@@ -12,5 +12,6 @@ namespace IVA.DTO.Contract
         long SRId { get; set; }
         DateTime Date { get; set; }
         byte[] ImageBytes { get; set; }
+        int? Order { get; set; }
     }
 }

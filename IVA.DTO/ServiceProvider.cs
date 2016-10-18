@@ -14,5 +14,8 @@ namespace IVA.DTO
         public string WebSite { get; set; }
         public string Email { get; set; }
         public bool IsActive { get; set; }
+
+        public virtual List<ServiceProviderLocation> Locations { get; set; }
+        public virtual ServiceCategory ServiceCategory { get; set; }
     }
 }

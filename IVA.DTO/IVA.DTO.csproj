@@ -11,6 +11,7 @@
     <AssemblyName>IVA.DTO</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,6 +65,8 @@
     <Compile Include="Contract\IServiceProviderLocation.cs" />
     <Compile Include="Contract\IUser.cs" />
     <Compile Include="Contract\IVehicleImage.cs" />
+    <Compile Include="Contract\IServiceRequestHistory.cs" />
+    <Compile Include="ServiceRequestHistory.cs" />
     <Compile Include="UserFeedback.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

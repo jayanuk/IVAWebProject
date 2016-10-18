@@ -19,13 +19,21 @@ namespace IVA.Common
 
         public struct ErrorCodes
         {
-            public const string AUTH_ERROR = "AUTH_ERROR";
-            
+            public const string AUTH_ERROR = "AUTH_ERROR";            
         }
 
         public struct ConfigurationKeys
         {
             public const string SMS_GatewayURL = "SMS_GatewayURL";
+            public const string SMS_GatewayAuthCode = "SMS_Gateway_AuthCode";
+        }
+
+        public enum ServiceRequestStatus
+        {
+            Initial = 1,
+            PendingResponse = 2,
+            SellerResponded = 3,
+            Expired = 4
         }
     }
 }

@@ -10,8 +10,11 @@ namespace IVA.DTO.Contract
     {
         long Id { get; set; }
         int ValidityId { get; set; }
+        string Name { get; set; }
         string Body { get; set; }
         decimal Amount { get; set; }
+        DateTime CreatedDate { get; set; }
+        long CreatedBy { get; set; }
         DateTime ModifiedDate { get; set; }
         long ModifiedBy { get; set; }
     }

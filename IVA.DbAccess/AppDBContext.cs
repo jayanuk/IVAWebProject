@@ -24,11 +24,12 @@ namespace IVA.DbAccess
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<UserPasscode> UserPasscodes { get; set; }
+        public DbSet<ServiceRequestHistory> ServiceRequestHistories { get; set; }
 
         public AppDBContext()
            : base(Constant.DEFAULT_DB_CONNECTION)
         {
-            Database.SetInitializer<AppDBContext>(null);
+            //Database.SetInitializer<AppDBContext>(null);
         }
 
         protected override void OnModelCreating(DbModelBuilder ModelBuilder)

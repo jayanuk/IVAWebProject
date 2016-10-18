@@ -97,7 +97,7 @@ namespace IVA.FindExpert.Models
         public static ApplicationDbContext Create()
         {
             var context = new ApplicationDbContext();
-            //context.Database.Initialize(true); Force OWIN table creation
+            //context.Database.Initialize(true); //Force OWIN table creation
             return context;
         }
     }

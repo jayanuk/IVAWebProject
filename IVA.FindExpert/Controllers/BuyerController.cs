@@ -16,16 +16,10 @@ using Microsoft.AspNet.Identity.Owin;
 using IVA.FindExpert.Models;
 using Microsoft.AspNet.Identity;
 
-namespace IVA.FindExpert.Controllers.WebAPI
+namespace IVA.FindExpert.Controllers
 {
-    public class DefaultController : ApiController
+    public class BuyerController : BaseController
     {
-        [Authorize]
-        public IHttpActionResult Get()
-        {
-            return Ok(new { s = "Test"});
-        }
-
         [HttpPost]
         [AllowAnonymous]
         public async Task<IHttpActionResult> PhoneValidate([FromBody] PhoneValidateRequest request)
@@ -46,8 +40,8 @@ namespace IVA.FindExpert.Controllers.WebAPI
 
                 await Utiliti.SendCode(passCode.Phone, code);
             }
-            catch(Exception ex)
-            {
+            catch (Exception ex)
+            {                
                 return InternalServerError();
             }
 
@@ -56,7 +50,7 @@ namespace IVA.FindExpert.Controllers.WebAPI
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IHttpActionResult> BuyerValidate([FromBody] LoginRequest AppRequest)
+        public async Task<IHttpActionResult> CodeValidate([FromBody] LoginRequest AppRequest)
         {
             var phone = AppRequest.Phone.Trim();
             var name = AppRequest.Name.Trim();
@@ -65,7 +59,7 @@ namespace IVA.FindExpert.Controllers.WebAPI
             DTO.Contract.IUser user = new User();
             user.UserType = UserType.BUYER;
             user.Name = name;
-            user.UserName = phone;            
+            user.UserName = phone;
             user.Password = AppRequest.Password;
             user.PasswordValidated = false;
 
@@ -83,7 +77,7 @@ namespace IVA.FindExpert.Controllers.WebAPI
                         return Json(Constant.ErrorCodes.AUTH_ERROR);
                 }
 
-                if(codeMatch)
+                if (codeMatch)
                 {
                     var userRepo = new UserRepository(context);
                     var curUser = userRepo.GetByUserName(user.UserName);
@@ -98,10 +92,10 @@ namespace IVA.FindExpert.Controllers.WebAPI
                         userRepo.Update(user);
                     }
                     else
-                    { 
+                    {
                         var loginUser = new ApplicationUser() { UserName = user.UserName };
-                        IdentityResult result = await getUserManager().CreateAsync(loginUser, pass.Code);
-                        var loginCreated = getUserManager().Find(user.UserName, pass.Code);
+                        IdentityResult result = await GetUserManager().CreateAsync(loginUser, pass.Code);
+                        var loginCreated = GetUserManager().Find(user.UserName, pass.Code);
 
                         if (loginCreated == null)
                             return null;
@@ -115,15 +109,10 @@ namespace IVA.FindExpert.Controllers.WebAPI
                             return InternalServerError();
                         }
                     }
-                }                
+                }
             }
 
             return Json(user);
-        }
-
-        private ApplicationUserManager getUserManager()
-        {
-            return Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-        }
+        }        
     }
 }

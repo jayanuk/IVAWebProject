@@ -20,6 +20,11 @@ namespace IVA.DbAccess.Repository
             return context.ServiceRequests.Where(r => r.Id == Id).FirstOrDefault();
         }
 
+        public List<IServiceRequest> GetByBuyerId(long Id)
+        {
+            return context.ServiceRequests.Where(r => r.UserId == Id).ToList<IServiceRequest>();
+        }
+
         public long Add(IServiceRequest ServiceRequestInstance)
         {
             ServiceRequest sr = new ServiceRequest();
@@ -35,6 +40,7 @@ namespace IVA.DbAccess.Repository
             sr.TimeOccured = DateTime.Now;
 
             context.ServiceRequests.Add(sr);
+            UpdateSRCode(sr);
             return sr.Id;
         }
 
@@ -46,7 +52,7 @@ namespace IVA.DbAccess.Repository
 
             sr.Code = ServiceRequestInstance.Code;
             sr.Description = ServiceRequestInstance.Description;
-            sr.Status = (int)Constant.ServiceRequestStatus.PendingResponse;
+            //sr.Status = (int)Constant.ServiceRequestStatus.PendingResponse;
             sr.ClaimType = ServiceRequestInstance.ClaimType;
             sr.RegistrationCategory = ServiceRequestInstance.RegistrationCategory;
             sr.UsageType = ServiceRequestInstance.UsageType;
@@ -55,6 +61,21 @@ namespace IVA.DbAccess.Repository
             sr.Vehiclevalue = ServiceRequestInstance.Vehiclevalue;
 
             context.SaveChanges();
+        }
+
+        public void UpdateSRStatus(long ServiceRequestId, int Status)
+        {
+            ServiceRequest sr = context.ServiceRequests.Where(r => r.Id == ServiceRequestId).FirstOrDefault();
+            if (sr == null)
+                return;
+            sr.Status = Status;
+            context.SaveChanges();
+        }
+
+        private void UpdateSRCode(ServiceRequest SR)
+        {
+            SR.Code = "SR-" + String.Format("{0:D6}", SR.Id);
+            Update(SR);
         }
     }
 }

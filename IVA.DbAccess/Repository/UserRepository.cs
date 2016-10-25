@@ -60,7 +60,8 @@ namespace IVA.DbAccess.Repository
             user.Name = AppUser.Name;
             user.Password = AppUser.Password;
             user.UserName = AppUser.UserName;
-            user.PasswordValidated = AppUser.PasswordValidated;        
+            user.PasswordValidated = AppUser.PasswordValidated;
+            user.ConnectionId = AppUser.ConnectionId;     
             context.SaveChanges();            
         }
     }

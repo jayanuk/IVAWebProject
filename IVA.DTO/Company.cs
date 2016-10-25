@@ -13,6 +13,6 @@ namespace IVA.DTO
         [Key]
         public long Id { get; set; }
         public string Name { get; set; }
-        public int IsActive { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -35,5 +35,20 @@ namespace IVA.Common
             SellerResponded = 3,
             Expired = 4
         }
+
+        public enum MessageStatus
+        {
+            Initial = 1,
+            Sent = 2,
+            Delivered = 3,
+            Read = 4,
+            Deleted = 5
+        }
+
+        public struct ChatGroup
+        {
+            public const string BUYER = "BUYER";
+            public const string SELLER = "SELLER";
+        }
     }
 }

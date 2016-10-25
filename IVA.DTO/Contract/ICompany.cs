@@ -10,6 +10,6 @@ namespace IVA.DTO.Contract
     {
         long Id { get; set; }
         string Name { get; set; }
-        int IsActive { get; set; }
+        bool IsActive { get; set; }
     }
 }

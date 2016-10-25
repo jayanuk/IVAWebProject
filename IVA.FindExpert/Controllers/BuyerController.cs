@@ -68,13 +68,13 @@ namespace IVA.FindExpert.Controllers
                 //validate code                
                 var pass = new UserPasscodeRepository(context).GetByPhone(phone);
                 if (pass == null)
-                    return Json(Constant.ErrorCodes.AUTH_ERROR);
+                    return Unauthorized();
                 else
                 {
                     if (pass.Code.Equals(user.Password))
                         codeMatch = true;
                     else
-                        return Json(Constant.ErrorCodes.AUTH_ERROR);
+                        return Unauthorized();
                 }
 
                 if (codeMatch)
@@ -112,7 +112,7 @@ namespace IVA.FindExpert.Controllers
                 }
             }
 
-            return Json(user);
+            return Ok(user);
         }        
     }
 }

@@ -15,6 +15,8 @@ namespace IVA.DTO.Contract
         string UserName { get; set; }        
         string Password { get; set; }
         bool PasswordValidated { get; set; }
+        string ConnectionId { get; set; }
+        bool? Connected { get; set; }
         DateTime? CreatedDate { get; set; }
         DateTime? ModifiedDate { get; set; }
     }

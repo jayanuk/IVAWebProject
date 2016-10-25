@@ -10,7 +10,8 @@ namespace IVA.DTO.Contract
     {
         long Id { get; set; }
         long SRId { get; set; }
-        string MessageText { get; set; }       
+        string MessageText { get; set; }
+        int SequenceId { get; set; }
         int Status { get; set; }
         long UserId { get; set; }
         DateTime CreatedTime { get; set; }

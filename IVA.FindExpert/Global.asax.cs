@@ -20,8 +20,8 @@ namespace IVA.FindExpert
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            AppDBContext context = new AppDBContext();
-            context.Database.Initialize(true);         
+            //AppDBContext context = new AppDBContext();
+            //context.Database.Initialize(true);         
         }
 
         protected void Application_Error(object sender, EventArgs e)

@@ -14,6 +14,7 @@ namespace IVA.DTO
         public long Id { get; set; }
         public long SRId { get; set; }
         public string MessageText { get; set; }
+        public int SequenceId { get; set; }
         public int Status { get; set; }
         public long UserId { get; set; }
         public DateTime CreatedTime { get; set; }

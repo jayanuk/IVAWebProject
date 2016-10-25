@@ -10,7 +10,7 @@ public class Utiliti
     public static int GenerateRandomNumber()
     {
         Random r = new Random();
-        int rnd = r.Next(100000, 1000000);
+        int rnd = r.Next(1000, 10000);
         return rnd;
     }    
 

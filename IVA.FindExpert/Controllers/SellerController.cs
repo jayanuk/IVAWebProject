@@ -37,7 +37,7 @@ namespace IVA.FindExpert.Controllers
                             var loginUser = new ApplicationUser() { UserName = curUser.UserName };
                             IdentityResult result = await GetUserManager().CreateAsync(loginUser, curUser.Password);
                         }
-                    }                    
+                    }                                      
                 }                
             }
             catch (Exception ex)

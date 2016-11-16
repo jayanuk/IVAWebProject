@@ -55,6 +55,7 @@
     <Compile Include="Contract\IAgentUser.cs" />
     <Compile Include="Contract\ICompany.cs" />
     <Compile Include="Contract\IQuotationTemplate.cs" />
+    <Compile Include="Contract\IRequestQuotation.cs" />
     <Compile Include="Contract\IUserFeedback.cs" />
     <Compile Include="Contract\IMessage.cs" />
     <Compile Include="Contract\IServiceRequest.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Contract\IUser.cs" />
     <Compile Include="Contract\IVehicleImage.cs" />
     <Compile Include="Contract\IServiceRequestHistory.cs" />
+    <Compile Include="RequestQuotation.cs" />
     <Compile Include="ServiceRequestHistory.cs" />
     <Compile Include="UserFeedback.cs" />
     <Compile Include="Message.cs" />

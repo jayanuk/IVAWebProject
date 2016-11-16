@@ -25,6 +25,7 @@ namespace IVA.DbAccess
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<UserPasscode> UserPasscodes { get; set; }
         public DbSet<ServiceRequestHistory> ServiceRequestHistories { get; set; }
+        public DbSet<RequestQuotation> RequestQuotations { get; set; }
 
         public AppDBContext()
            : base(Constant.DEFAULT_DB_CONNECTION)

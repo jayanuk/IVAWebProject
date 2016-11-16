@@ -77,5 +77,12 @@ namespace IVA.DbAccess.Repository
             SR.Code = "SR-" + String.Format("{0:D6}", SR.Id);
             Update(SR);
         }
+
+        public void AddQuotation(RequestQuotation Quotation)
+        {
+            var existing = context.RequestQuotations.Where(q => q.ServiceRequestId == Quotation.ServiceRequestId).FirstOrDefault();
+            if(existing == null)
+                context.RequestQuotations.Add(Quotation);
+        }
     }
 }

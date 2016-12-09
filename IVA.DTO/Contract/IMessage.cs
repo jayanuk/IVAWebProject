@@ -9,13 +9,11 @@ namespace IVA.DTO.Contract
     public interface IMessage
     {
         long Id { get; set; }
-        long SRId { get; set; }
-        string MessageText { get; set; }
-        int SequenceId { get; set; }
-        int Status { get; set; }
-        long UserId { get; set; }
-        DateTime CreatedTime { get; set; }
-        int Type { get; set; } //Request from buyer or response from seller
-        long RequestId { get; set; } //Parent message id where this message is in reply to
+        long ThreadId { get; set; }        
+        long SenderId { get; set; }
+        long RecieverId { get; set; }
+        string MessageText { get; set; }        
+        int Status { get; set; }        
+        DateTime Time { get; set; }        
     }
 }

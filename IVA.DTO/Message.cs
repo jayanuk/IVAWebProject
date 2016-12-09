@@ -12,13 +12,13 @@ namespace IVA.DTO
     {
         [Key]
         public long Id { get; set; }
-        public long SRId { get; set; }
+        public long ThreadId { get; set; }
+        public long SenderId { get; set; }
+        public long RecieverId { get; set; }
         public string MessageText { get; set; }
-        public int SequenceId { get; set; }
         public int Status { get; set; }
-        public long UserId { get; set; }
-        public DateTime CreatedTime { get; set; }
-        public int Type { get; set; } //Request from buyer or response from seller
-        public long RequestId { get; set; } //Parent message id whe
+        public DateTime Time { get; set; }
+
+        public virtual MessageThread MessageThread { get; set; }
     }
 }

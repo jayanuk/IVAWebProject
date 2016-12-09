@@ -11,19 +11,21 @@ namespace IVA.DTO
     {
         public long Id { get; set; }
         public string Code { get; set; }
-        public string Description { get; set; }
-
+        public int InsuranceTypeId { get; set; }
         public long UserId { get; set; }
         public DateTime TimeOccured { get; set; }
 
+        public string VehicleNo { get; set; }
         public int ClaimType { get; set; }
         public int UsageType { get; set; }
         public int RegistrationCategory { get; set; }
-
-        public decimal Vehiclevalue { get; set; }
-        public string VehicleNo { get; set; }
+        public decimal VehicleValue { get; set; }        
+        public int VehicleYear { get; set; }
+        public bool IsFinanced { get; set; }
         public int Status { get; set; }
 
         virtual public List<VehicleImage> Images { get; set; }
+        virtual public List<RequestQuotation> QuotationList { get; set; }
+        
     }
 }

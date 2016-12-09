@@ -25,6 +25,7 @@ namespace IVA.DbAccess.Repository
             {
                 UserId = Profile.UserId,
                 Phone = Profile.Phone,
+                Mobile = Profile.Mobile,
                 FirstName = Profile.FirstName,
                 LastName = Profile.LastName,
                 Email = Profile.Email,
@@ -33,7 +34,11 @@ namespace IVA.DbAccess.Repository
                 LocationLatitude = Profile.LocationLatitude,
                 LocationLongitude = Profile.LocationLongitude,
                 ContactMethod = Profile.ContactMethod,
-                NotificationFrequencyMinutes = Profile.NotificationFrequencyMinutes
+                NotificationFrequencyMinutes = Profile.NotificationFrequencyMinutes,
+                BankId = Profile.BankId,
+                BankBranch = Profile.BankBranch,
+                AccountName = Profile.AccountName,
+                AccountNo = Profile.AccountNo
             };
             context.UserProfiles.Add(profile);
             context.SaveChanges();
@@ -42,10 +47,11 @@ namespace IVA.DbAccess.Repository
 
         public void Update(IUserProfile Profile)
         {
-            UserProfile profile = context.UserProfiles.Where(p => p.Id == Profile.Id).FirstOrDefault();
+            UserProfile profile = context.UserProfiles.Where(p => p.UserId == Profile.UserId).FirstOrDefault();
             profile.FirstName = Profile.FirstName;
             profile.LastName = Profile.LastName;
             profile.Phone = Profile.Phone;
+            profile.Mobile = Profile.Mobile;
             profile.Email = Profile.Email;
             profile.Image = Profile.Image;
             profile.Location = Profile.Location;
@@ -53,6 +59,10 @@ namespace IVA.DbAccess.Repository
             profile.LocationLongitude = Profile.LocationLongitude;
             profile.ContactMethod = Profile.ContactMethod;
             profile.NotificationFrequencyMinutes = Profile.NotificationFrequencyMinutes;
+            profile.BankId = Profile.BankId == 0 ? null : Profile.BankId;
+            profile.BankBranch = Profile.BankBranch;
+            profile.AccountNo = Profile.AccountNo;
+            profile.AccountName = Profile.AccountName;
 
             context.SaveChanges();
         }

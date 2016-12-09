@@ -26,7 +26,7 @@ namespace IVA.FindExpert.Controllers
         {
             try
             {
-                var code = Utiliti.GenerateRandomNumber().ToString();
+                var code = Utility.GenerateRandomNumber().ToString();
                 IUserPasscode passCode = new UserPasscode();
                 passCode.Code = code;
                 passCode.Phone = request.Phone;
@@ -38,14 +38,14 @@ namespace IVA.FindExpert.Controllers
                     repo.Add(passCode);
                 }
 
-                await Utiliti.SendCode(passCode.Phone, code);
+                await Utility.SendCode(passCode.Phone, code);
             }
             catch (Exception ex)
             {                
                 return InternalServerError();
             }
 
-            return Ok();
+            return Ok("SUCCESS");
         }
 
         [HttpPost]
@@ -55,7 +55,9 @@ namespace IVA.FindExpert.Controllers
             var phone = AppRequest.Phone.Trim();
             var name = AppRequest.Name.Trim();
             bool codeMatch = false;
+            string token = String.Empty;
 
+            IUserProfile profile = null;
             DTO.Contract.IUser user = new User();
             user.UserType = UserType.BUYER;
             user.Name = name;
@@ -85,8 +87,15 @@ namespace IVA.FindExpert.Controllers
 
                     if (curUser != null)
                     {
+                        if (!(curUser.IsActive ?? false))
+                            return Unauthorized();
+
+                        if (curUser.LoginId != null)
+                            await GetUserManager().ChangePasswordAsync(curUser.LoginId ?? 0, curUser.Password, pass.Code);                            
+
                         user.Id = curUser.Id;
                         user.LoginId = curUser.LoginId;
+                        user.Password = pass.Code;
                         user.CreatedDate = curUser.CreatedDate;
                         user.ModifiedDate = DateTime.Now;
                         userRepo.Update(user);
@@ -107,12 +116,51 @@ namespace IVA.FindExpert.Controllers
                         if (!result.Succeeded)
                         {
                             return InternalServerError();
-                        }
+                        }                        
                     }
+
+                    profile = new UserProfileRepository(context).GetByUserId(user.Id);
                 }
             }
 
-            return Ok(user);
+            token = await Utility.GetToken(user.UserName, user.Password);
+            
+            var model = new UserModel {
+                                        Id = user.Id,
+                                        LoginId = user.LoginId ?? 0,
+                                        UserType = UserType.BUYER,
+                                        Name = user.Name,
+                                        Password =  user.Password,
+                                        PasswordValidated = true,
+                                        Token = token,
+                                        UserName = user.UserName
+            };
+            if(profile != null)
+            {
+                UserProfileModel userProfileModel = new UserProfileModel
+                {
+                    Id = profile.Id,
+                    UserId = profile.UserId,
+                    FirstName = profile.FirstName,
+                    LastName = profile.LastName,
+                    Gender = profile.Gender ?? 0,
+                    Email = profile.Email,
+                    Phone = profile.Email,
+                    Mobile = profile.Mobile,
+                    Street = profile.Street,
+                    City = profile.City,
+                    Image = profile.Image,
+                    Location = profile.Location,
+                    ContactMethod = profile.ContactMethod ?? 0,
+                    BankId = profile.BankId,
+                    BankBranch = profile.BankBranch,
+                    AccountName = profile.AccountName,
+                    AccountNo = profile.AccountNo,
+                    NotificationFrequencyMinutes = profile.NotificationFrequencyMinutes ?? 0
+                };
+                model.UserProfile = userProfileModel;
+            }
+            return Ok(model);
         }        
     }
 }

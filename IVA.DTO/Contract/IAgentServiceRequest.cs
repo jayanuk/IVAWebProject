@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 
 namespace IVA.DTO.Contract
 {
-    public interface IRequestQuotation
+    public interface IAgentServiceRequest
     {
         long Id { get; set; }
         long ServiceRequestId { get; set; }
-        long QuotationTemplateId { get; set; }
-        decimal? Premimum { get; set; }
-        decimal? Cover { get; set; }
         long AgentId { get; set; }
         int? Status { get; set; }
+        DateTime? ResponseTime { get; set; }
         DateTime? CreatedTime { get; set; }
-        DateTime? ModifiedTime { get; set; }
+
+        ServiceRequest ServiceRequest { get; set; }
     }
 }

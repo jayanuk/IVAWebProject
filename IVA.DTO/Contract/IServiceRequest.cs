@@ -10,17 +10,20 @@ namespace IVA.DTO.Contract
     {
         long Id { get; set; }
         string Code { get; set; }
-        string Description { get; set; }
-
+        int InsuranceTypeId { get; set; }
         long UserId { get; set; }
         DateTime TimeOccured { get; set; }
 
         int ClaimType { get; set; }
         int UsageType { get; set; }
         int RegistrationCategory { get; set; }
-
-        decimal Vehiclevalue { get; set; }
+        decimal VehicleValue { get; set; }
         string VehicleNo { get; set; }
+        int VehicleYear { get; set; }
+        bool IsFinanced { get; set; }
         int Status { get; set; }
+
+        List<VehicleImage> Images { get; set; }
+        List<RequestQuotation> QuotationList { get; set; }
     }
 }

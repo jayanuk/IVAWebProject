@@ -26,6 +26,7 @@ namespace IVA.Common
         {
             public const string SMS_GatewayURL = "SMS_GatewayURL";
             public const string SMS_GatewayAuthCode = "SMS_Gateway_AuthCode";
+            public const string Token_Url = "Token_Url";
         }
 
         public enum ServiceRequestStatus
@@ -33,7 +34,8 @@ namespace IVA.Common
             Initial = 1,
             PendingResponse = 2,
             SellerResponded = 3,
-            Expired = 4
+            Expired = 4,
+            Closed = 5
         }
 
         public enum MessageStatus
@@ -45,6 +47,13 @@ namespace IVA.Common
             Deleted = 5
         }
 
+        public enum QuotationStatus
+        {
+            Initial = 1,
+            Accepted = 2,
+            Closed = 3
+        }
+        
         public struct ChatGroup
         {
             public const string BUYER = "BUYER";

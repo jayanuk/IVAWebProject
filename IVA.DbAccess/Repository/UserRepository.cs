@@ -16,15 +16,23 @@ namespace IVA.DbAccess.Repository
 
         public IUser GetByUserName(string UserName)
         {
-            UserName = UserName.Trim();
-            return context.Users.Where(u => UserName.Equals(u.UserName)).FirstOrDefault();
+            try
+            {
+                UserName = UserName.Trim();
+                return context.Users.Where(u => UserName.Equals(u.UserName)).FirstOrDefault();
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+            
         }
 
         public IUser GetByUserNameAndPassword(string UserName, string Password)
         {
             UserName = UserName.Trim();
             return context.Users.Where(u => UserName.Equals(u.UserName) && 
-                                        u.Password.Equals(Password)).FirstOrDefault();
+                                        u.Password.Equals(Password) && (u.IsActive ?? false)).FirstOrDefault();
         }
 
         public IUser GetByLoginId(long LoginId)
@@ -45,7 +53,8 @@ namespace IVA.DbAccess.Repository
             user.Name = AppUser.Name;
             user.Password = AppUser.Password;
             user.UserName = AppUser.UserName;
-            user.PasswordValidated = AppUser.PasswordValidated;
+            user.PasswordValidated = AppUser.PasswordValidated;            
+            user.CompanyId = AppUser.CompanyId;
 
             context.Users.Add(user);
             context.SaveChanges();
@@ -61,8 +70,15 @@ namespace IVA.DbAccess.Repository
             user.Password = AppUser.Password;
             user.UserName = AppUser.UserName;
             user.PasswordValidated = AppUser.PasswordValidated;
-            user.ConnectionId = AppUser.ConnectionId;     
+            user.ConnectionId = AppUser.ConnectionId;
+            user.CompanyId = AppUser.CompanyId;
             context.SaveChanges();            
+        }
+
+        public List<IUser> GetAgentsByCompany(int CompanyId)
+        {
+            return context.Users.Where(
+                u => u.CompanyId == CompanyId && (u.IsActive ?? false)).ToList<IUser>();
         }
     }
 }

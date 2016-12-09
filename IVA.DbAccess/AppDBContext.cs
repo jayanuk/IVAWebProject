@@ -14,6 +14,7 @@ namespace IVA.DbAccess
         public DbSet<Agent> Agents { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<MessageThread> MessageThreads { get; set; }
         public DbSet<QuotationTemplate> QuotationTemplates { get; set; }
         public DbSet<ServiceCategory> ServiceCategories { get; set; }
         public DbSet<ServiceProvider> ServiceProviders { get; set; }
@@ -26,6 +27,7 @@ namespace IVA.DbAccess
         public DbSet<UserPasscode> UserPasscodes { get; set; }
         public DbSet<ServiceRequestHistory> ServiceRequestHistories { get; set; }
         public DbSet<RequestQuotation> RequestQuotations { get; set; }
+        public DbSet<AgentServiceRequest> AgentServiceRequests { get; set; }
 
         public AppDBContext()
            : base(Constant.DEFAULT_DB_CONNECTION)

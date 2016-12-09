@@ -11,7 +11,7 @@ using System.Web.Http;
 
 using IVA.FindExpert.Models;
 using Microsoft.AspNet.Identity;
-
+using static IVA.Common.Constant;
 
 namespace IVA.FindExpert.Controllers
 {
@@ -29,15 +29,34 @@ namespace IVA.FindExpert.Controllers
                     var userRepo = new UserRepository(context);
                     curUser = userRepo.GetByUserNameAndPassword(request.Phone, request.Password);
 
-                    if(curUser != null)
+                    if (curUser != null)
                     {
                         var login = GetUserManager().Find(curUser.UserName, curUser.Password);
-                        if(login == null)
+                        if (login == null)
                         {
                             var loginUser = new ApplicationUser() { UserName = curUser.UserName };
                             IdentityResult result = await GetUserManager().CreateAsync(loginUser, curUser.Password);
+
+                            if (result.Succeeded)
+                            {
+                                var loginCreated = GetUserManager().Find(curUser.UserName, curUser.Password);
+
+                                if (loginCreated == null)
+                                    return null;
+
+                                curUser.LoginId = loginCreated.Id;
+                                curUser.CreatedDate = DateTime.Now;
+                                curUser.ModifiedDate = DateTime.Now;
+                                userRepo.Update(curUser);
+                            }
                         }
-                    }                                      
+                        else
+                        {
+                            curUser.LoginId = login.Id;
+                        }
+                    }
+                    else
+                        return null;                                   
                 }                
             }
             catch (Exception ex)
@@ -45,7 +64,21 @@ namespace IVA.FindExpert.Controllers
                 return InternalServerError();
             }
 
-            return Ok(curUser);
+            string token = await Utility.GetToken(curUser.UserName, curUser.Password);
+
+            var model = new UserModel
+            {
+                Id = curUser.Id,
+                LoginId = curUser.LoginId ?? 0,
+                UserType = UserType.SELLER,
+                Name = curUser.Name,
+                Password = curUser.Password,
+                PasswordValidated = true,
+                Token = token,
+                UserName = curUser.UserName,
+                CompanyId = curUser.CompanyId ?? 0
+            };
+            return Ok(model);
         }
 
     }

@@ -1,11 +1,13 @@
 ﻿using IVA.Common;
+using Newtonsoft.Json;
 using System;
 using System.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Web;
 
-public class Utiliti
+public class Utility
 {
     public static int GenerateRandomNumber()
     {
@@ -27,17 +29,48 @@ public class Utiliti
 
         using (var stringContent = new StringContent("destination=" + Phone + "&q=" + authCode + "&message=" + Message,
                                                         System.Text.Encoding.UTF8, "application/x-www-form-urlencoded"))
-        using (var client = new HttpClient())
         {
-            try
+            using (var client = new HttpClient())
             {
-                var response = await client.PostAsync(smsGateway, stringContent);
-                var result = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var response = await client.PostAsync(smsGateway, stringContent);
+                    var result = await response.Content.ReadAsStringAsync();
 
-            }
-            catch (Exception ex)
-            {
+                }
+                catch (Exception ex)
+                {
+                }
             }
         }
+        
+    }
+
+    public static async Task<string> GetToken(string UserName, string Password)
+    {
+        //var tokenUrl = HttpContext.Current.Request.ServerVariables["HTTP_HOST"] + "/Token";
+        var tokenUrl = ConfigurationManager.AppSettings[Constant.ConfigurationKeys.Token_Url];
+        var token = "";
+
+        using (var stringContent = new StringContent("username=" + UserName + "&password=" + Password + "&grant_type=password",
+                                                        System.Text.Encoding.UTF8, "application/x-www-form-urlencoded"))
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.PostAsync(tokenUrl, stringContent);
+                    var result = await response.Content.ReadAsStringAsync();
+                    dynamic tokenObj = JsonConvert.DeserializeObject<object>(result);
+                    token = tokenObj.access_token;
+
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+        }
+
+        return token;        
     }
 }

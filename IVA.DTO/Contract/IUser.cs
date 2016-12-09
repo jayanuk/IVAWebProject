@@ -10,14 +10,18 @@ namespace IVA.DTO.Contract
     {
         long Id { get; set; }
         long? LoginId { get; set; }
-        int UserType { get; set; }   
+        int UserType { get; set; }
         string Name { get; set; }
-        string UserName { get; set; }        
+        string UserName { get; set; }
         string Password { get; set; }
         bool PasswordValidated { get; set; }
         string ConnectionId { get; set; }
         bool? Connected { get; set; }
         DateTime? CreatedDate { get; set; }
         DateTime? ModifiedDate { get; set; }
+        int? CompanyId { get; set; }
+        bool? IsActive { get; set; }
+
+        Company Company { get; set; }
     }
 }

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace IVA.DTO.Contract
 {
-    public interface ICompany
+    interface IInsuranceType
     {
         int Id { get; set; }
         string Name { get; set; }
+        string Description { get; set; }
         bool IsActive { get; set; }
     }
 }

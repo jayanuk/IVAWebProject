@@ -97,7 +97,7 @@ namespace IVA.FindExpert.Controllers
                         user.LoginId = curUser.LoginId;
                         user.Password = pass.Code;
                         user.CreatedDate = curUser.CreatedDate;
-                        user.ModifiedDate = DateTime.Now;
+                        user.ModifiedDate = DateTime.Now.ToUniversalTime();
                         userRepo.Update(user);
                     }
                     else
@@ -110,7 +110,7 @@ namespace IVA.FindExpert.Controllers
                             return null;
 
                         user.LoginId = loginCreated.Id;
-                        user.CreatedDate = DateTime.Now;
+                        user.CreatedDate = DateTime.Now.ToUniversalTime();
                         user.Id = userRepo.Add(user);
 
                         if (!result.Succeeded)

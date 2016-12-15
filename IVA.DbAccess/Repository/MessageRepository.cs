@@ -16,8 +16,9 @@ namespace IVA.DbAccess.Repository
         }
 
         public long Add(Message Message)
-        {
+        {            
             context.Messages.Add(Message);
+            context.SaveChanges();
             return Message.Id;
         }
 

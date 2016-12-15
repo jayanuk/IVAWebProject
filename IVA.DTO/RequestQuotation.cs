@@ -19,6 +19,7 @@ namespace IVA.DTO
         public decimal? Cover { get; set; }
         public long AgentId { get; set; }
         public int? Status { get; set; }
+        public string QuotationText { get; set; }
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
 

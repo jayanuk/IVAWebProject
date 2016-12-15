@@ -30,6 +30,8 @@ namespace IVA.DbAccess.Repository
                 LastName = Profile.LastName,
                 Email = Profile.Email,
                 Image = Profile.Image,
+                Street = Profile.Street,
+                City = Profile.City,
                 Location = Profile.Location,
                 LocationLatitude = Profile.LocationLatitude,
                 LocationLongitude = Profile.LocationLongitude,
@@ -54,6 +56,8 @@ namespace IVA.DbAccess.Repository
             profile.Mobile = Profile.Mobile;
             profile.Email = Profile.Email;
             profile.Image = Profile.Image;
+            profile.Street = Profile.Street;
+            profile.City = Profile.City;
             profile.Location = Profile.Location;
             profile.LocationLatitude = Profile.LocationLatitude;
             profile.LocationLongitude = Profile.LocationLongitude;

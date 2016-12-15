@@ -76,6 +76,14 @@ public class ServiceRequestModel
     public int Status { get; set; }
     public string ExpiryDate { get; set; }
 
+    public string BuyerName { get; set; }
+    public string BuyerMobile { get; set; }
+    public string BuyerPhone { get; set; }
+    public bool IsAllowPhone { get; set; }
+    public string City { get; set; }
+
+    public string TimeToExpire { get; set; }
+
     public List<RequestQuotationViewModel> QuotationList { get; set; }
     public List<VehicleImage> Images { get; set; }
 }
@@ -85,6 +93,7 @@ public class RequestQuotationViewModel
     public long Id { get; set; }
     public long ServiceRequestId { get; set; }
     public long QuotationTemplateId { get; set; }
+    public string QuotationText { get; set; }
     public string Premimum { get; set; }
     public string Cover { get; set; }
     public long AgentId { get; set; }
@@ -96,6 +105,7 @@ public class RequestQuotationViewModel
     public string QuotationTemplateName { get; set; }
     public string CreatedTime { get; set; }
     public string ModifiedTime { get; set; }
+    public long ThreadId { get; set; }
 }
 
 public class CompanyModel
@@ -103,4 +113,59 @@ public class CompanyModel
     public long Id { get; set; }
     public string Name { get; set; }
     public bool IsActive { get; set; }
+}
+
+public class UserFeedbackModel
+{
+    public long Id { get; set; }
+    public int Rating { get; set; }
+    public string Description { get; set; }    
+    public long UserId { get; set; }
+}
+
+public class MessageThreadModel
+{
+    public long Id { get; set; }
+    public long RequestId { get; set; }
+    public long BuyerId { get; set; }
+    public string BuyerName { get; set; }
+    public long AgentId { get; set; }
+    public string AgentName { get; set; }
+    public string CompanyName { get; set; }
+    public string VehicleNo { get; set; }
+    public string Description { get; set; }
+    public string Date { get; set; }
+    public string Time { get; set; }
+    public long CreatedBy { get; set; }
+
+    public List<MessageModel> Messages { get; set; }
+}
+
+public class MessageModel
+{
+    public long Id { get; set; }
+    public long ThreadId { get; set; }
+    public long SenderId { get; set; }
+    public long RecieverId { get; set; }
+    public long RequestId { get; set; }
+    public string MessageText { get; set; }
+    public int Status { get; set; }
+    public string Time { get; set; }
+
+    public string SenderName { get; set; }
+}
+
+public class QuotationTemplateModel
+{
+    public long Id { get; set; }
+    public int ValidityId { get; set; }
+    public int CompanyId { get; set; }
+    public string ValidityName { get; set; }
+    public string Name { get; set; }
+    public string Body { get; set; }
+    public decimal Amount { get; set; }
+    public DateTime? CreatedDate { get; set; }
+    public long CreatedBy { get; set; }
+    public DateTime? ModifiedDate { get; set; }
+    public long ModifiedBy { get; set; }
 }

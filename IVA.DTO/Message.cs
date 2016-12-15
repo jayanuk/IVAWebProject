@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +18,6 @@ namespace IVA.DTO
         public long RecieverId { get; set; }
         public string MessageText { get; set; }
         public int Status { get; set; }
-        public DateTime Time { get; set; }
-
-        public virtual MessageThread MessageThread { get; set; }
+        public DateTime Time { get; set; }       
     }
 }

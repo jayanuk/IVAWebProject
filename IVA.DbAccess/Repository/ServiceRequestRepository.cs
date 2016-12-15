@@ -25,6 +25,13 @@ namespace IVA.DbAccess.Repository
             return context.ServiceRequests.Where(r => r.UserId == Id).ToList<IServiceRequest>();
         }
 
+        public List<IServiceRequest> GetByAgentId(long AgentId)
+        {
+            var agentRequests = new AgentServiceRequestRepository(context).GetByAgentId(AgentId);
+            var serviceRequests = agentRequests.Select(a => a.ServiceRequest).ToList<IServiceRequest>();
+            return serviceRequests;
+        }
+
         public long Add(ServiceRequest ServiceRequestInstance)
         {
             ServiceRequest sr = new ServiceRequest();
@@ -38,7 +45,7 @@ namespace IVA.DbAccess.Repository
             sr.VehicleNo = ServiceRequestInstance.VehicleNo;
             sr.VehicleValue = ServiceRequestInstance.VehicleValue;
             sr.VehicleYear = ServiceRequestInstance.VehicleYear;
-            sr.TimeOccured = DateTime.Now;
+            sr.TimeOccured = DateTime.Now.ToUniversalTime();
             sr.IsFinanced = ServiceRequestInstance.IsFinanced;
 
             context.ServiceRequests.Add(sr);

@@ -15,6 +15,7 @@ namespace IVA.DTO.Contract
         decimal? Cover { get; set; }
         long AgentId { get; set; }
         int? Status { get; set; }
+        string QuotationText { get; set; }
         DateTime? CreatedTime { get; set; }
         DateTime? ModifiedTime { get; set; }
     }

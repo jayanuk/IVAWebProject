@@ -29,6 +29,7 @@ namespace IVA.DbAccess.Repository
         public long Add(MessageThread MessageThread)
         {
             context.MessageThreads.Add(MessageThread);
+            context.SaveChanges();
             return MessageThread.Id;
         }
 
@@ -50,6 +51,11 @@ namespace IVA.DbAccess.Repository
         public List<IMessageThread> GetByAgentId(long AgentId)
         {
             return context.MessageThreads.Where(m => m.AgentId == AgentId).ToList<IMessageThread>();
+        }
+
+        public IMessageThread GetByAgentAndRequest(long AgentId, long RequestId)
+        {
+            return context.MessageThreads.Where(m => m.AgentId == AgentId && m.RequestId == RequestId).FirstOrDefault();
         }
     }
 }

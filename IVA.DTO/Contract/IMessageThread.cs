@@ -12,6 +12,9 @@ namespace IVA.DTO.Contract
         long RequestId { get; set; }
         long BuyerId { get; set; }
         long AgentId { get; set; }
+        long CreatedBy { get; set; }
         DateTime CreatedTime { get; set; }
+
+        List<Message> Messages { get; set; }
     }
 }

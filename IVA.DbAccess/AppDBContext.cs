@@ -32,7 +32,7 @@ namespace IVA.DbAccess
         public AppDBContext()
            : base(Constant.DEFAULT_DB_CONNECTION)
         {
-            //Database.SetInitializer<AppDBContext>(null);
+            Database.SetInitializer<AppDBContext>(null);
         }
 
         protected override void OnModelCreating(DbModelBuilder ModelBuilder)

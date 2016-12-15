@@ -33,16 +33,16 @@ namespace IVA.DbAccess.Repository
                 Update(Quotation);
         }
 
-        public List<RequestQuotation> GetByRequestAndAgent(long RequestId, long AgentId)
+        public RequestQuotation GetByRequestAndAgent(long RequestId, long AgentId)
         {
             return context.RequestQuotations.Where(
-                r => r.ServiceRequestId == RequestId && r.AgentId == AgentId).ToList();
+                r => r.ServiceRequestId == RequestId && r.AgentId == AgentId).FirstOrDefault();
         }
 
         public long Add(RequestQuotation Quotation)
         {
-            Quotation.CreatedTime = DateTime.Now;
-            Quotation.ModifiedTime = DateTime.Now;
+            Quotation.CreatedTime = DateTime.Now.ToUniversalTime();
+            Quotation.ModifiedTime = DateTime.Now.ToUniversalTime();
             context.RequestQuotations.Add(Quotation);
             context.SaveChanges();
             return Quotation.Id;
@@ -53,7 +53,7 @@ namespace IVA.DbAccess.Repository
             var existing = context.RequestQuotations.Where(q => q.Id == Quotation.Id).FirstOrDefault();
             if (existing != null)
             {
-                existing.ModifiedTime = DateTime.Now;
+                existing.ModifiedTime = DateTime.Now.ToUniversalTime();
                 existing.Premimum = Quotation.Premimum;
                 existing.Cover = Quotation.Cover;
                 existing.QuotationTemplateId = Quotation.QuotationTemplateId;

@@ -10,6 +10,7 @@ namespace IVA.DTO.Contract
     {
         long Id { get; set; }
         int ValidityId { get; set; }
+        int CompanyId { get; set; }
         string Name { get; set; }
         string Body { get; set; }
         decimal? Amount { get; set; }

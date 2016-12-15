@@ -22,7 +22,7 @@ namespace IVA.DbAccess.Repository
                 code.Code = Code.Code;
                 code.Phone = Code.Phone;
                 code.Name = Code.Name;
-                code.Time = DateTime.Now;
+                code.Time = DateTime.Now.ToUniversalTime();
 
                 context.UserPasscodes.Add(code);
                 context.SaveChanges();

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNet.Identity.Owin;
+﻿using IVA.Common;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,6 +15,6 @@ namespace IVA.FindExpert.Controllers
         public ApplicationUserManager GetUserManager()
         {
             return Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-        }
+        }       
     }
 }

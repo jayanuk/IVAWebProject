@@ -26,7 +26,7 @@ namespace IVA.FindExpert.Controllers
                     LastName = model.LastName,
                     Gender = model.Gender,
                     Email = model.Email,
-                    Phone = model.Email,
+                    Phone = model.Phone,
                     Mobile = model.Mobile,
                     Street = model.Street,
                     City = model.City,
@@ -75,7 +75,7 @@ namespace IVA.FindExpert.Controllers
                     LastName = profile.LastName,
                     Gender = profile.Gender ?? 0,
                     Email = profile.Email,
-                    Phone = profile.Email,
+                    Phone = profile.Phone,
                     Mobile = profile.Mobile,
                     Street = profile.Street,
                     City = profile.City,
@@ -90,6 +90,31 @@ namespace IVA.FindExpert.Controllers
                 };
             }
             return Ok(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IHttpActionResult FeedBack(UserFeedbackModel Model)
+        {
+            var feedback = new UserFeedback();
+            feedback.Date = DateTime.Now.ToUniversalTime();
+            feedback.Description = Model.Description;
+            feedback.Rating = 0;
+            feedback.UserId = Model.UserId;
+
+            using (AppDBContext context = new AppDBContext())
+            {
+                try
+                {
+                    var repo = new UserFeedbackRepository(context);
+                    repo.Add(feedback);
+                }
+                catch(Exception ex)
+                {
+                    return InternalServerError(ex);
+                }
+            }
+            return Ok();
         }
     }
 }

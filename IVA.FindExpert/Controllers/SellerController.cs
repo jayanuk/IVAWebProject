@@ -45,8 +45,8 @@ namespace IVA.FindExpert.Controllers
                                     return null;
 
                                 curUser.LoginId = loginCreated.Id;
-                                curUser.CreatedDate = DateTime.Now;
-                                curUser.ModifiedDate = DateTime.Now;
+                                curUser.CreatedDate = DateTime.Now.ToUniversalTime();
+                                curUser.ModifiedDate = DateTime.Now.ToUniversalTime();
                                 userRepo.Update(curUser);
                             }
                         }

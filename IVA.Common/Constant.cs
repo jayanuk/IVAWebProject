@@ -10,6 +10,8 @@ namespace IVA.Common
     {
         public const string DEFAULT_DB_CONNECTION = "DefaultConnection";
         public const string OWIN_DB_CONNECTION = "DefaultConnection";
+        public const int DAYS_TO_EXPIRE_REQUEST = 2;
+        public const int HOURS_TO_FOLLOW_UP = 8;
 
         public struct UserType
         {
@@ -27,6 +29,7 @@ namespace IVA.Common
             public const string SMS_GatewayURL = "SMS_GatewayURL";
             public const string SMS_GatewayAuthCode = "SMS_Gateway_AuthCode";
             public const string Token_Url = "Token_Url";
+            public const string UTC_Offset = "UTC_Offset";
         }
 
         public enum ServiceRequestStatus
@@ -58,6 +61,13 @@ namespace IVA.Common
         {
             public const string BUYER = "BUYER";
             public const string SELLER = "SELLER";
+        }
+
+        public enum ContactMethod
+        {
+            Phone = 1,
+            Message = 2,            
+            Both = 0
         }
     }
 }

@@ -35,7 +35,7 @@ namespace IVA.DbAccess.Repository
             if(existing != null)
             {
                 existing.Status = (int)Constant.ServiceRequestStatus.SellerResponded;
-                existing.ResponseTime = DateTime.Now;
+                existing.ResponseTime = DateTime.Now.ToUniversalTime();
                 context.SaveChanges();
             }
         }

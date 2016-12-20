@@ -137,6 +137,7 @@ namespace IVA.FindExpert.Controllers
                             thread.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
+                        thread.VehicleNo = request.VehicleNo;
 
                         foreach(var message in thread.Messages)
                         {
@@ -207,6 +208,7 @@ namespace IVA.FindExpert.Controllers
                             thread.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
+                        thread.VehicleNo = request.VehicleNo;
 
                         foreach (var message in thread.Messages)
                         {

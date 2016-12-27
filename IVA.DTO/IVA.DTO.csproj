@@ -59,6 +59,7 @@
     <Compile Include="Contract\ICompany.cs" />
     <Compile Include="Contract\IInsuranceType.cs" />
     <Compile Include="Contract\IMessageThread.cs" />
+    <Compile Include="Contract\IPromotion.cs" />
     <Compile Include="Contract\IQuotationTemplate.cs" />
     <Compile Include="Contract\IRegistrationCategory.cs" />
     <Compile Include="Contract\IRequestQuotation.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Contract\IVehicleImage.cs" />
     <Compile Include="Contract\IServiceRequestHistory.cs" />
     <Compile Include="MessageThread.cs" />
+    <Compile Include="Promotion.cs" />
     <Compile Include="RequestQuotation.cs" />
     <Compile Include="ServiceRequestHistory.cs" />
     <Compile Include="UserFeedback.cs" />

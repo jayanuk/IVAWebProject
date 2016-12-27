@@ -97,7 +97,8 @@ namespace IVA.FindExpert.Controllers
 
                 using (AppDBContext context = new AppDBContext())
                 {
-                    new RequestQuotationRepository(context).Save(quotation);
+                    long quoteId = new RequestQuotationRepository(context).Save(quotation);
+                    new AgentServiceRequestRepository(context).UpdateResponseTime(model.ServiceRequestId, model.AgentId);
 
                     var request = new ServiceRequestRepository(context).GetById(model.ServiceRequestId);
                     var agentProfile = new UserProfileRepository(context).GetByUserId(model.AgentId);
@@ -108,10 +109,11 @@ namespace IVA.FindExpert.Controllers
 
                     MessageModel message = new MessageModel
                     {
-                        MessageText = agentName + " Sent you a Quotation",
+                        MessageText = "New Quotation Sent by agent:" + agentName,
                         RequestId = model.ServiceRequestId,
                         SenderId = model.AgentId,
-                        RecieverId = request.UserId
+                        RecieverId = request.UserId,
+                        QuotationId = quoteId
                     };
                     AddMessage(message, context);
                 }
@@ -166,6 +168,7 @@ namespace IVA.FindExpert.Controllers
                     SenderId = Model.SenderId,
                     RecieverId = Model.RecieverId,
                     Status = (int)Constant.MessageStatus.Initial,
+                    QuotationId = Model.QuotationId,
                     Time = DateTime.Now.ToUniversalTime()
                 };
 

@@ -16,7 +16,7 @@ namespace IVA.FindExpert.Controllers
     {
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public IHttpActionResult GetThreadById(long ThreadId)
         {
             MessageThreadModel thread = null;
@@ -44,6 +44,7 @@ namespace IVA.FindExpert.Controllers
                                 SenderId = m.SenderId,
                                 MessageText = m.MessageText,
                                 Status = m.Status,
+                                QuotationId = m.QuotationId ?? 0,
                                 Time = m.Time.GetAdjustedTime().ToString("yyyy-MM-dd hh:mm tt")
                             }).ToList()
 
@@ -86,6 +87,79 @@ namespace IVA.FindExpert.Controllers
             return Ok(thread);
         }
 
+        [HttpGet]
+        [Authorize]
+        public IHttpActionResult GetThreadById(long ThreadId, long UserId)
+        {
+            MessageThreadModel thread = null;
+            try
+            {
+                using (AppDBContext context = new AppDBContext())
+                {
+                    var t = new MessageThreadRepository(context).GetById(ThreadId);
+                    if (t != null)
+                    {
+                        thread = new MessageThreadModel
+                        {
+                            Id = t.Id,
+                            AgentId = t.AgentId,
+                            BuyerId = t.BuyerId,
+                            RequestId = t.RequestId,
+                            Date = t.CreatedTime.GetAdjustedTime().ToString("dd/MMM"),
+                            Time = t.CreatedTime.GetAdjustedTime().ToString("HH:mm"),
+                            Messages = t.Messages.OrderByDescending(
+                            m => m.Time).Select(m => new MessageModel
+                            {
+                                Id = m.Id,
+                                ThreadId = m.ThreadId,
+                                RecieverId = m.RecieverId,
+                                SenderId = m.SenderId,
+                                MessageText = m.MessageText,
+                                Status = m.Status,
+                                QuotationId = m.QuotationId ?? 0,
+                                Time = m.Time.GetAdjustedTime().ToString("yyyy-MM-dd hh:mm tt")
+                            }).ToList()
+
+                        };
+
+                        var userRepo = new UserRepository(context);
+                        var userProfileRepo = new UserProfileRepository(context);
+                        var buyer = userRepo.GetByUserId(thread.BuyerId);
+                        var agent = userRepo.GetByUserId(thread.AgentId);
+                        var buyerProfile = userProfileRepo.GetByUserId(thread.BuyerId);
+                        var agentProfile = userProfileRepo.GetByUserId(thread.AgentId);
+                        var request = new ServiceRequestRepository(context).GetById(thread.RequestId);
+                        thread.AgentName = agent.Name;
+                        if (agentProfile != null)
+                            thread.AgentName = agentProfile.FirstName + " " + agentProfile.LastName;
+                        thread.CompanyName = agent.Company.Name;
+                        thread.BuyerName = buyer.Name;
+                        if (buyerProfile != null)
+                            thread.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
+
+                        thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
+
+                        foreach (var message in thread.Messages)
+                        {
+                            var sender = userRepo.GetByUserId(message.SenderId);
+                            message.SenderName = sender.Name;
+                            var senderProfile = userProfileRepo.GetByUserId(message.SenderId);
+                            if (senderProfile != null)
+                                message.SenderName = senderProfile.FirstName + " " + senderProfile.LastName;
+                        }
+
+                        new MessageRepository(context).UpdateMessgesToRead(UserId, ThreadId);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+
+            return Ok(thread);
+        }
 
         [HttpGet]
         [Authorize]
@@ -114,6 +188,7 @@ namespace IVA.FindExpert.Controllers
                                 SenderId = m.SenderId,                                
                                 MessageText = m.MessageText,
                                 Status = m.Status,
+                                QuotationId = m.QuotationId ?? 0,
                                 Time = m.Time.GetAdjustedTime().ToString("yyyy-MM-dd HH:mm")
                             }).ToList()
 
@@ -146,7 +221,30 @@ namespace IVA.FindExpert.Controllers
                             var senderProfile = userProfileRepo.GetByUserId(message.SenderId);
                             if (senderProfile != null)
                                 message.SenderName = senderProfile.FirstName + " " + senderProfile.LastName;
-                        }
+                        }                        
+                    }
+                    
+                    var promotion = new PromotionRepository(context).GetLatestPromotion(1); //TODO change the type to param
+                    PromotionModel promModel = null;
+
+                    if(promotion != null)
+                    {
+                        promModel = new PromotionModel
+                        {
+                            Id = promotion.Id,
+                            Title = promotion.Title,
+                            Header = promotion.Header,
+                            Description = promotion.Description,
+                            CreatedDate = promotion.CreatedDate?.ToString(Constant.DateFormatType.YYYYMMDD),
+                            Status = promotion.Status ?? 0,
+                            Type = ((promotion.Type ?? 0) == Constant.PromotionType.OFFER) ? "Offers" : "Promotions"
+                        };
+                        MessageThreadModel promotionEntry = new MessageThreadModel();
+                        promotionEntry.Description = promModel.Type;
+                        promotionEntry.Promotion = promModel;
+                        if (threads == null)
+                            threads = new List<MessageThreadModel>();
+                        threads.Insert(0, promotionEntry);
                     }
                 }
             }
@@ -159,7 +257,7 @@ namespace IVA.FindExpert.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public IHttpActionResult GetAgentThreads(long UserId)
         {
             List<MessageThreadModel> threads = null;
@@ -185,6 +283,7 @@ namespace IVA.FindExpert.Controllers
                                 SenderId = m.SenderId,
                                 MessageText = m.MessageText,
                                 Status = m.Status,
+                                QuotationId = m.QuotationId ?? 0,
                                 Time = m.Time.GetAdjustedTime().ToString("yyyy-MM-dd HH:mm")
                             }).ToList()
 
@@ -228,7 +327,6 @@ namespace IVA.FindExpert.Controllers
 
             return Ok(threads);
         }
-
 
         [HttpPost]
         [Authorize]
@@ -294,6 +392,7 @@ namespace IVA.FindExpert.Controllers
                         {
                             buyerId = recipient.Id;
                             agentId = sender.Id;
+                            new AgentServiceRequestRepository(context).UpdateResponseTime(Model.RequestId, agentId);
                         }
 
                         var existingthread =
@@ -331,6 +430,24 @@ namespace IVA.FindExpert.Controllers
             return Ok(Id);
         }
 
+        [HttpGet]
+        [Authorize]
+        public IHttpActionResult UnreadMessageCount(long UserId)
+        {
+            long count = 0;
+            try
+            {
+                using (AppDBContext context = new AppDBContext())
+                {
+                    count = new MessageRepository(context).UnreadMessageCount(UserId);
+                }
+            }
+            catch(Exception ex)
+            {
+                return InternalServerError();
+            }
 
+            return Ok(count);
+        }
     }
 }

@@ -24,13 +24,18 @@ namespace IVA.DbAccess.Repository
                 r => r.ServiceRequestId == RequestId).OrderByDescending(q => q.ModifiedTime).ToList();
         }
 
-        public void Save(RequestQuotation Quotation)
+        public long Save(RequestQuotation Quotation)
         {
-            var existing = GetByRequestAndAgent(Quotation.ServiceRequestId, Quotation.AgentId);
+            long id = 0;
+            var existing = GetByRequestAndAgent(Quotation.ServiceRequestId, Quotation.AgentId);            
             if (existing == null)
-                Add(Quotation);
+                id = Add(Quotation);
             else
+            {
                 Update(Quotation);
+                id = existing.Id;
+            }
+            return id;   
         }
 
         public RequestQuotation GetByRequestAndAgent(long RequestId, long AgentId)

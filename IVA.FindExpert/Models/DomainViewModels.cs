@@ -139,6 +139,7 @@ public class MessageThreadModel
     public long CreatedBy { get; set; }
 
     public List<MessageModel> Messages { get; set; }
+    public PromotionModel Promotion { get; set; }
 }
 
 public class MessageModel
@@ -151,7 +152,7 @@ public class MessageModel
     public string MessageText { get; set; }
     public int Status { get; set; }
     public string Time { get; set; }
-
+    public long QuotationId { get; set; }
     public string SenderName { get; set; }
 }
 
@@ -168,4 +169,16 @@ public class QuotationTemplateModel
     public long CreatedBy { get; set; }
     public DateTime? ModifiedDate { get; set; }
     public long ModifiedBy { get; set; }
+}
+
+public class PromotionModel
+{
+    public long Id { get; set; }
+    public int InsuranceType { get; set; }
+    public string Title { get; set; }
+    public string Header { get; set; }
+    public string Description { get; set; }
+    public string CreatedDate { get; set; }
+    public int Status { get; set; }
+    public string Type { get; set; }
 }

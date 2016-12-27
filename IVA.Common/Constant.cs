@@ -10,8 +10,13 @@ namespace IVA.Common
     {
         public const string DEFAULT_DB_CONNECTION = "DefaultConnection";
         public const string OWIN_DB_CONNECTION = "DefaultConnection";
-        public const int DAYS_TO_EXPIRE_REQUEST = 2;
+        public const int DAYS_TO_EXPIRE_REQUEST = 20;
         public const int HOURS_TO_FOLLOW_UP = 8;
+
+        public struct DateFormatType
+        {
+            public const string YYYYMMDD = "yyyy-MM-dd";
+        }
 
         public struct UserType
         {
@@ -61,6 +66,19 @@ namespace IVA.Common
         {
             public const string BUYER = "BUYER";
             public const string SELLER = "SELLER";
+        }
+
+        public struct PromotionStatus
+        {
+            public const int ACTIVE = 1;
+            public const int INACTIVE = 2;
+            public const int EXPIRED = 3;
+        }
+
+        public struct PromotionType
+        {            
+            public const int OFFER = 1;
+            public const int PROMOTION = 2;
         }
 
         public enum ContactMethod

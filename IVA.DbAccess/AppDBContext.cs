@@ -28,6 +28,7 @@ namespace IVA.DbAccess
         public DbSet<ServiceRequestHistory> ServiceRequestHistories { get; set; }
         public DbSet<RequestQuotation> RequestQuotations { get; set; }
         public DbSet<AgentServiceRequest> AgentServiceRequests { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
 
         public AppDBContext()
            : base(Constant.DEFAULT_DB_CONNECTION)

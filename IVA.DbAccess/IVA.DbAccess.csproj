@@ -57,6 +57,7 @@
     <Compile Include="Repository\CompanyRepository.cs" />
     <Compile Include="Repository\MessageRepository.cs" />
     <Compile Include="Repository\MessageThreadRepository.cs" />
+    <Compile Include="Repository\PromotionRepository.cs" />
     <Compile Include="Repository\QuotationTemplateRepository.cs" />
     <Compile Include="Repository\RequestQuotationRepository.cs" />
     <Compile Include="Repository\ServiceCategoryRepository.cs" />

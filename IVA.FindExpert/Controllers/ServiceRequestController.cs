@@ -14,14 +14,20 @@ namespace IVA.FindExpert.Controllers
     public class ServiceRequestController : BaseController
     {
         [HttpGet]
-        [Authorize]
-        public IHttpActionResult GetByBuyerId(long BuyerId)
+        //[Authorize]
+        public IHttpActionResult GetByBuyerId(long BuyerId,int Status)
         {
             var requests = new List<ServiceRequestModel>();
             using (AppDBContext context = new AppDBContext())
             {
-                requests = new ServiceRequestRepository(context).GetByBuyerId(BuyerId).
-                    OrderByDescending(r => r.TimeOccured).
+                var result = new ServiceRequestRepository(context).GetByBuyerId(BuyerId).ToList();
+                if (Status == (int)Constant.ServiceRequestStatus.Closed)
+                    result = result.Where(r => r.Status == (int)Constant.ServiceRequestStatus.Closed).ToList();
+                else if(Status == (int)Constant.ServiceRequestStatus.Expired)
+                    result = result.Where(r => r.Status == (int)Constant.ServiceRequestStatus.Expired ||
+                            r.TimeOccured.AddDays(Constant.DAYS_TO_EXPIRE_REQUEST) < DateTime.Now.GetAdjustedTime()).ToList();
+
+                requests = result.OrderByDescending(r => r.TimeOccured).
                     Select(
                     i => new ServiceRequestModel
                     {
@@ -118,7 +124,8 @@ namespace IVA.FindExpert.Controllers
             using (AppDBContext context = new AppDBContext())
             {
                 requests = new ServiceRequestRepository(context).GetByAgentId(AgentId).
-                    Where(r => r.TimeOccured.AddDays(Constant.DAYS_TO_EXPIRE_REQUEST).AddHours(-Constant.HOURS_TO_FOLLOW_UP) < DateTime.Now.ToUniversalTime()
+                    Where(r => r.TimeOccured.AddDays(Constant.DAYS_TO_EXPIRE_REQUEST) > DateTime.Now && 
+                        r.TimeOccured.AddDays(Constant.DAYS_TO_EXPIRE_REQUEST).AddHours(-Constant.HOURS_TO_FOLLOW_UP) < DateTime.Now.ToUniversalTime()
                         && (r.Status != (int)Constant.ServiceRequestStatus.Expired || r.Status != (int)Constant.ServiceRequestStatus.Closed)).
                     OrderByDescending(r => r.TimeOccured).
                     Select(

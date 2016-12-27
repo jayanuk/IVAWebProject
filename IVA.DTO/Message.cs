@@ -18,6 +18,7 @@ namespace IVA.DTO
         public long RecieverId { get; set; }
         public string MessageText { get; set; }
         public int Status { get; set; }
-        public DateTime Time { get; set; }       
+        public DateTime Time { get; set; }    
+        public long? QuotationId { get; set; }   
     }
 }

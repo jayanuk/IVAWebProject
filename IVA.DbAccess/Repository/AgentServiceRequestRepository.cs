@@ -25,7 +25,9 @@ namespace IVA.DbAccess.Repository
 
         public List<IAgentServiceRequest> GetByAgentId(long AgentId)
         {
-            return context.AgentServiceRequests.Where(i => i.AgentId == AgentId).ToList<IAgentServiceRequest>();
+            return context.AgentServiceRequests.Where(
+                i => i.AgentId == AgentId && 
+                i.Status != (int)Constant.ServiceRequestStatus.Expired).ToList<IAgentServiceRequest>();
         }
 
         public void UpdateResponseTime(long RequestId, long AgentId)

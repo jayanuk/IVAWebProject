@@ -248,6 +248,7 @@
     <Compile Include="Controllers\BuyerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Controllers\PromotionController.cs" />
     <Compile Include="Controllers\QuotationController.cs" />
     <Compile Include="Controllers\QuotationTemplateController.cs" />
     <Compile Include="Controllers\SellerController.cs" />

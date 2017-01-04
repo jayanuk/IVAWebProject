@@ -129,6 +129,7 @@ namespace IVA.FindExpert.Controllers
                         var buyerProfile = userProfileRepo.GetByUserId(thread.BuyerId);
                         var agentProfile = userProfileRepo.GetByUserId(thread.AgentId);
                         var request = new ServiceRequestRepository(context).GetById(thread.RequestId);
+
                         thread.AgentName = agent.Name;
                         if (agentProfile != null)
                             thread.AgentName = agentProfile.FirstName + " " + agentProfile.LastName;
@@ -138,6 +139,7 @@ namespace IVA.FindExpert.Controllers
                             thread.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
+                        thread.RequestStatus = request.Status;
 
                         foreach (var message in thread.Messages)
                         {
@@ -146,6 +148,8 @@ namespace IVA.FindExpert.Controllers
                             var senderProfile = userProfileRepo.GetByUserId(message.SenderId);
                             if (senderProfile != null)
                                 message.SenderName = senderProfile.FirstName + " " + senderProfile.LastName;
+                            if (message.QuotationId > 0)
+                                thread.HasQuotation = true;
                         }
 
                         new MessageRepository(context).UpdateMessgesToRead(UserId, ThreadId);

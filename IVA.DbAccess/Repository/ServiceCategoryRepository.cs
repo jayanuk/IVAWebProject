@@ -17,5 +17,10 @@ namespace IVA.DbAccess.Repository
         {
             return context.ServiceCategories.Where(c => c.IsActive).ToList<IServiceCategory>();
         }
+
+        public List<IServiceCategory> GetAllRoot()
+        {
+            return context.ServiceCategories.Where(c => c.IsActive && c.ParentId == null).ToList<IServiceCategory>();
+        }
     }
 }

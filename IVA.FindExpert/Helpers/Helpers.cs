@@ -1,7 +1,9 @@
 ﻿using IVA.Common;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Dynamic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -73,4 +75,37 @@ public class Utility
 
         return token;        
     }
+}
+
+public class DynamicEntity : DynamicObject
+{
+    private IDictionary<string, object> _values;
+
+    public DynamicEntity(IDictionary<string, object> values)
+    {
+        _values = values;
+    }
+    public override bool TryGetMember(GetMemberBinder binder, out object result)
+    {
+        if (_values.ContainsKey(binder.Name))
+        {
+            result = _values[binder.Name];
+            return true;
+        }
+        result = null;
+        return false;
+    }
+
+    /*
+    usage:
+    var values = new Dictionary<string, object>();
+    values.Add("Title", "Hello World!");
+    values.Add("Text", "My first post");
+    values.Add("Tags", new[] { "hello", "world" });
+
+    var post = new DynamicEntity(values);
+
+    dynamic dynPost = post;
+    var text = dynPost.Text;
+     */
 }

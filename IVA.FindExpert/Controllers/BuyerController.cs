@@ -96,8 +96,9 @@ namespace IVA.FindExpert.Controllers
                         user.Id = curUser.Id;
                         user.LoginId = curUser.LoginId;
                         user.Password = pass.Code;
-                        user.CreatedDate = curUser.CreatedDate;
+                        //user.CreatedDate = curUser.CreatedDate;
                         user.ModifiedDate = DateTime.Now.ToUniversalTime();
+                        user.IsActive = true;
                         userRepo.Update(user);
                     }
                     else
@@ -110,6 +111,7 @@ namespace IVA.FindExpert.Controllers
                             return null;
 
                         user.LoginId = loginCreated.Id;
+                        user.IsActive = true; 
                         user.CreatedDate = DateTime.Now.ToUniversalTime();
                         user.Id = userRepo.Add(user);
 
@@ -162,5 +164,19 @@ namespace IVA.FindExpert.Controllers
             }
             return Ok(model);
         }        
+
+        [HttpGet]
+        public IHttpActionResult GetUserCode(string Phone)
+        {
+            var code = String.Empty;
+            using (AppDBContext context = new AppDBContext())
+            {
+                var ce = new UserPasscodeRepository(context).GetByPhone(Phone);
+                if(ce != null)
+                    code = ce.Code;
+            }
+
+            return Ok(code);
+        }
     }
 }

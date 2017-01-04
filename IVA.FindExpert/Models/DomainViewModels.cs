@@ -137,6 +137,8 @@ public class MessageThreadModel
     public string Date { get; set; }
     public string Time { get; set; }
     public long CreatedBy { get; set; }
+    public bool HasQuotation { get; set; }
+    public int RequestStatus { get; set; }
 
     public List<MessageModel> Messages { get; set; }
     public PromotionModel Promotion { get; set; }
@@ -181,4 +183,17 @@ public class PromotionModel
     public string CreatedDate { get; set; }
     public int Status { get; set; }
     public string Type { get; set; }
+}
+
+public class ServiceLocation
+{
+    public string Category { get; set; }
+    public string ParentCategory { get; set; }
+    public string Company { get; set; }
+    public double Distance { get; set; }
+    public string DistanceKM { get; set; }
+    public string Location { get; set; }
+    public string Address { get; set; }
+    public string Mobile { get; set; }
+    public string Phone { get; set; }
 }

@@ -28,18 +28,23 @@ namespace IVA.FindExpert.Controllers
                         Id = quote.Id,
                         ServiceRequestId = quote.ServiceRequestId,
                         QuotationTemplateId = quote.QuotationTemplateId,
-                        Premimum = quote.Premimum?.ToString("0.00"),
-                        Cover = quote.Cover?.ToString("0.00"),
+                        Premimum = quote.Premimum?.ToString("#,##0.00"),
+                        Cover = quote.Cover?.ToString("#,##0.00"),
                         AgentId = quote.AgentId,
                         AgentName = quote.Agent?.Name,
                         AgentContact = quote.Agent?.UserName,
                         CompanyId = quote.Agent?.CompanyId ?? 0,
                         CompanyName = quote.Agent?.Company?.Name,
                         QuotationTemplateName = quote.QuotationTemplate.Name,
-                        QuotationText = quote.QuotationText
+                        QuotationText = quote.QuotationText,
+                        Status = quote.Status ?? 0
                     };
 
-                    var messageThread = new MessageThreadRepository(context).GetByAgentAndRequest(model.AgentId, model.ServiceRequestId);
+                    if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||
+                        quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Expired)
+                        model.Status = (int)Constant.QuotationStatus.Closed;
+
+                        var messageThread = new MessageThreadRepository(context).GetByAgentAndRequest(model.AgentId, model.ServiceRequestId);
                     if(messageThread != null)
                         model.ThreadId = messageThread.Id;
                 }
@@ -90,9 +95,9 @@ namespace IVA.FindExpert.Controllers
                     AgentId = model.AgentId,
                     QuotationTemplateId = model.QuotationTemplateId,
                     QuotationText = model.QuotationText,
-                    Premimum = Convert.ToDecimal(model.Premimum),
+                    Premimum = Convert.ToDecimal(model.Premimum.Replace(",", String.Empty)),
                     Status = (int)Constant.QuotationStatus.Initial,
-                    Cover = Convert.ToDecimal(model.Cover)
+                    Cover = Convert.ToDecimal(model.Cover.Replace(",", String.Empty))
                 };
 
                 using (AppDBContext context = new AppDBContext())
@@ -104,12 +109,14 @@ namespace IVA.FindExpert.Controllers
                     var agentProfile = new UserProfileRepository(context).GetByUserId(model.AgentId);
                     var agent = new UserRepository(context).GetByUserId(model.AgentId);
                     var agentName = agent.Name;
+                    var company = agent.Company.Name;
                     if (agentProfile != null)
                         agentName = agentProfile.FirstName + " " + agentProfile.LastName;
 
+
                     MessageModel message = new MessageModel
                     {
-                        MessageText = "New Quotation Sent by agent:" + agentName,
+                        MessageText = "New Quotation Sent by: " + agentName + "\n" + company,
                         RequestId = model.ServiceRequestId,
                         SenderId = model.AgentId,
                         RecieverId = request.UserId,

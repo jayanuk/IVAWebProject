@@ -20,7 +20,7 @@ namespace IVA.DTO.Contract
         string Mobile { get; set; }
         string Phone { get; set; }
         string Fax { get; set; }              
-        double Longitude { get; set; }
-        double Latitude { get; set; }
+        double? Longitude { get; set; }
+        double? Latitude { get; set; }
     }
 }

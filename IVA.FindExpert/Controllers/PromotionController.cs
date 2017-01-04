@@ -71,5 +71,35 @@ namespace IVA.FindExpert.Controllers
 
             return Ok(promotion);
         }
+
+        [HttpGet]
+        [Authorize]
+        public IHttpActionResult GetLatestPromotion(int Type)
+        {
+            PromotionModel promotion = null;
+            try
+            {
+                using (AppDBContext context = new AppDBContext())
+                {
+                    var p = new PromotionRepository(context).GetLatestPromotion(Type);
+                    promotion = new PromotionModel
+                    {
+                        Id = p.Id,
+                        Title = p.Title,
+                        Header = p.Header,
+                        Description = p.Description,
+                        CreatedDate = p.CreatedDate?.ToString(Constant.DateFormatType.YYYYMMDD),
+                        Status = p.Status ?? 0,
+                        Type = ((p.Type ?? 0) == Constant.PromotionType.OFFER) ? "Offers" : "Promotions"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+
+            return Ok(promotion);
+        }
     }
 }

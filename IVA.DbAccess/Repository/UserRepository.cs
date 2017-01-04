@@ -55,6 +55,8 @@ namespace IVA.DbAccess.Repository
             user.UserName = AppUser.UserName;
             user.PasswordValidated = AppUser.PasswordValidated;            
             user.CompanyId = AppUser.CompanyId;
+            user.IsActive = AppUser.IsActive;
+            user.CreatedDate = AppUser.CreatedDate;
 
             context.Users.Add(user);
             context.SaveChanges();
@@ -72,6 +74,8 @@ namespace IVA.DbAccess.Repository
             user.PasswordValidated = AppUser.PasswordValidated;
             user.ConnectionId = AppUser.ConnectionId;
             user.CompanyId = AppUser.CompanyId;
+            user.IsActive = AppUser.IsActive;
+            user.ModifiedDate = AppUser.ModifiedDate;
             context.SaveChanges();            
         }
 

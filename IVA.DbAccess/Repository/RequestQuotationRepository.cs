@@ -32,6 +32,7 @@ namespace IVA.DbAccess.Repository
                 id = Add(Quotation);
             else
             {
+                Quotation.Id = existing.Id;
                 Update(Quotation);
                 id = existing.Id;
             }

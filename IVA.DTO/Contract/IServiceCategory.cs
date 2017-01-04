@@ -9,7 +9,9 @@ namespace IVA.DTO.Contract
     public interface IServiceCategory
     {
         int Id { get; set; }
+        int? ParentId { get; set; }
         string Name { get; set; }
+        string Description { get; set; }
         bool IsActive { get; set; }
     }
 }

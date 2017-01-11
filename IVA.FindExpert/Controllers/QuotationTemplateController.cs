@@ -96,5 +96,34 @@ namespace IVA.FindExpert.Controllers
 
             return Ok();
         }
+
+        [HttpPost]
+        [Authorize]
+        public IHttpActionResult Add(QuotationTemplateModel Model)
+        {
+            try
+            {
+                QuotationTemplate template = new QuotationTemplate();
+                //template.Id = Model.Id;
+                template.CompanyId = Model.CompanyId;
+                template.Name = Model.Name;
+                template.Body = Model.Body;
+                template.ValidityId = 1;
+                template.CreatedBy = Model.ModifiedBy;
+                template.CreatedDate = DateTime.Now.ToUniversalTime();
+
+                using (AppDBContext context = new AppDBContext())
+                {
+                    var repo = new QuotationTemplateRepository(context);
+                    repo.Add(template);
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+
+            return Ok();
+        }
     }
 }

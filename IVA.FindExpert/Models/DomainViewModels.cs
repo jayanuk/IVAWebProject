@@ -139,6 +139,7 @@ public class MessageThreadModel
     public long CreatedBy { get; set; }
     public bool HasQuotation { get; set; }
     public int RequestStatus { get; set; }
+    public int UnreadMessageCount { get; set; }
 
     public List<MessageModel> Messages { get; set; }
     public PromotionModel Promotion { get; set; }

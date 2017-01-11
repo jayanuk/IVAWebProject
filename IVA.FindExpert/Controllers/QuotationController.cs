@@ -116,7 +116,7 @@ namespace IVA.FindExpert.Controllers
 
                     MessageModel message = new MessageModel
                     {
-                        MessageText = "New Quotation Sent by: " + agentName + "\n" + company,
+                        MessageText = "Quotation Sent by: " + agentName + "\n" + company,
                         RequestId = model.ServiceRequestId,
                         SenderId = model.AgentId,
                         RecieverId = request.UserId,

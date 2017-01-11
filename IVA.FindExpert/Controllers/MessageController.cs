@@ -66,6 +66,7 @@ namespace IVA.FindExpert.Controllers
                             thread.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
+                        thread.UnreadMessageCount = thread.Messages.Count(m => m.Status == (int)Constant.MessageStatus.Initial);
 
                         foreach (var message in thread.Messages)
                         {
@@ -141,6 +142,11 @@ namespace IVA.FindExpert.Controllers
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
                         thread.RequestStatus = request.Status;
 
+                        var latestMessageWithQuote = thread.Messages.Where(
+                            m => m.QuotationId > 0).OrderByDescending(m => m.Id).FirstOrDefault()?.Id;
+
+                        thread.UnreadMessageCount = thread.Messages.Count(m => m.Status == (int)Constant.MessageStatus.Initial);
+                        
                         foreach (var message in thread.Messages)
                         {
                             var sender = userRepo.GetByUserId(message.SenderId);
@@ -150,6 +156,11 @@ namespace IVA.FindExpert.Controllers
                                 message.SenderName = senderProfile.FirstName + " " + senderProfile.LastName;
                             if (message.QuotationId > 0)
                                 thread.HasQuotation = true;
+
+                            if (message.Id != latestMessageWithQuote)
+                                message.QuotationId = 0;
+                            else
+                                message.MessageText = "New " + message.MessageText;
                         }
 
                         new MessageRepository(context).UpdateMessgesToRead(UserId, ThreadId);
@@ -217,8 +228,9 @@ namespace IVA.FindExpert.Controllers
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
                         thread.VehicleNo = request.VehicleNo;
+                        thread.UnreadMessageCount = thread.Messages.Count(m => m.Status == (int)Constant.MessageStatus.Initial);
 
-                        foreach(var message in thread.Messages)
+                        foreach (var message in thread.Messages)
                         {
                             var sender = userRepo.GetByUserId(message.SenderId);
                             message.SenderName = sender.Name;
@@ -312,6 +324,7 @@ namespace IVA.FindExpert.Controllers
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
                         thread.VehicleNo = request.VehicleNo;
+                        thread.UnreadMessageCount = thread.Messages.Count(m => m.Status == (int)Constant.MessageStatus.Initial);
 
                         foreach (var message in thread.Messages)
                         {

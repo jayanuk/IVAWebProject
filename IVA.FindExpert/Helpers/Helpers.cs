@@ -26,8 +26,8 @@ public class Utility
 
     public static async Task SendMessage(string Phone, string Message)
     {
-        var smsGateway = ConfigurationManager.AppSettings[Constant.ConfigurationKeys.SMS_GatewayURL];
-        var authCode = ConfigurationManager.AppSettings[Constant.ConfigurationKeys.SMS_GatewayAuthCode];
+        var smsGateway = System.Configuration.ConfigurationManager.AppSettings[Constant.ConfigurationKeys.SMS_GatewayURL];
+        var authCode = System.Configuration.ConfigurationManager.AppSettings[Constant.ConfigurationKeys.SMS_GatewayAuthCode];
 
         using (var stringContent = new StringContent("destination=" + Phone + "&q=" + authCode + "&message=" + Message,
                                                         System.Text.Encoding.UTF8, "application/x-www-form-urlencoded"))
@@ -51,7 +51,7 @@ public class Utility
     public static async Task<string> GetToken(string UserName, string Password)
     {
         //var tokenUrl = HttpContext.Current.Request.ServerVariables["HTTP_HOST"] + "/Token";
-        var tokenUrl = ConfigurationManager.AppSettings[Constant.ConfigurationKeys.Token_Url];
+        var tokenUrl = System.Configuration.ConfigurationManager.AppSettings[Constant.ConfigurationKeys.Token_Url];
         var token = "";
 
         using (var stringContent = new StringContent("username=" + UserName + "&password=" + Password + "&grant_type=password",

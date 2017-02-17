@@ -84,5 +84,17 @@ namespace IVA.DbAccess.Repository
             return context.Users.Where(
                 u => u.CompanyId == CompanyId && (u.IsActive ?? false)).ToList<IUser>();
         }
+
+        public string GetName(long UserId)
+        {
+            var name = GetByUserId(UserId).Name;
+            var profile = new UserProfileRepository(context).GetByUserId(UserId);
+            if(profile != null)
+            {
+                if (!String.IsNullOrEmpty(profile.FirstName))
+                    name = profile.FirstName + " " + profile.LastName;
+            }
+            return name;
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace IVA.FindExpert.Helpers
     {
         public static DateTime GetAdjustedTime(this DateTime Time)
         {
-            double offset = Convert.ToDouble(ConfigurationManager.AppSettings[Constant.ConfigurationKeys.UTC_Offset].ToString());
+            double offset = ConfigurationHelper.TIME_OFFSET;
             DateTime adjustedTime = Time.AddHours(offset);
             return adjustedTime;
         }

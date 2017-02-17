@@ -22,6 +22,7 @@ namespace IVA.DTO.Contract
         int VehicleYear { get; set; }
         bool IsFinanced { get; set; }
         int Status { get; set; }
+        bool? BuyerResponded { get; set; }
 
         List<VehicleImage> Images { get; set; }
         List<RequestQuotation> QuotationList { get; set; }

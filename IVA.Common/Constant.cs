@@ -9,9 +9,7 @@ namespace IVA.Common
     public class Constant
     {
         public const string DEFAULT_DB_CONNECTION = "DefaultConnection";
-        public const string OWIN_DB_CONNECTION = "DefaultConnection";
-        public const int DAYS_TO_EXPIRE_REQUEST = 20;
-        public const int HOURS_TO_FOLLOW_UP = 8;
+        public const string OWIN_DB_CONNECTION = "DefaultConnection";       
 
         public struct DateFormatType
         {
@@ -35,6 +33,9 @@ namespace IVA.Common
             public const string SMS_GatewayAuthCode = "SMS_Gateway_AuthCode";
             public const string Token_Url = "Token_Url";
             public const string UTC_Offset = "UTC_Offset";
+            public const string DAYS_TO_EXPIRE_REQUEST = "REQUEST_EXPIRE_WINDOW";
+            public const string HOURS_TO_FOLLOW_UP = "HOURS_TO_FOLLOW_UP";
+            public const string NOTIFICATION_TITLE = "NOTIFICATION_TITLE";
         }
 
         public enum ServiceRequestStatus
@@ -87,5 +88,32 @@ namespace IVA.Common
             Message = 2,            
             Both = 0
         }
+
+        public struct Notification
+        {
+            //public const string TITLE = "FindExpert";            
+            public const string NEW_REQUEST_TEXT = "You have received a new request";            
+            public const string NEW_MESSAGE_TEXT = "You have recieved a new message";            
+            public const string NEW_QUOTATION_TEXT = "You have recieved a new quotation";            
+            public const string ACCCEPTED_TEXT = "Your quotation was accepted";
+        }
+
+        public enum NotificationType
+        {
+            Request = 1,
+            Message = 2,
+            Quotation = 3,
+            Accept = 4,
+            FollowUpBuyer = 5,
+            FollowUpAgent = 6
+        }
+
+        public struct Paging
+        {
+            public const int BUYER_REQUESTS_PER_PAGE = 20;
+            public const int AGENT_REQUESTS_PER_PAGE = 20;
+            public const int MESSAGE_THREADS_PER_PAGE = 20;
+        }
+
     }
 }

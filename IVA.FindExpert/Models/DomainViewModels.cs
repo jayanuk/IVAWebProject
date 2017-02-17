@@ -83,6 +83,7 @@ public class ServiceRequestModel
     public string City { get; set; }
 
     public string TimeToExpire { get; set; }
+    public bool IsFollowUp { get; set; }
 
     public List<RequestQuotationViewModel> QuotationList { get; set; }
     public List<VehicleImage> Images { get; set; }
@@ -106,6 +107,11 @@ public class RequestQuotationViewModel
     public string CreatedTime { get; set; }
     public string ModifiedTime { get; set; }
     public long ThreadId { get; set; }
+
+    public string ServiceRequestCode { get; set; }
+    public int ClaimType { get; set; }
+    public string VehicleNo { get; set; }
+    public decimal VehicleValue { get; set; }
 }
 
 public class CompanyModel
@@ -197,4 +203,11 @@ public class ServiceLocation
     public string Address { get; set; }
     public string Mobile { get; set; }
     public string Phone { get; set; }
+}
+
+public class UserDeviceModel
+{
+    public long UserId { get; set; }
+    public string DeviceToken { get; set; }
+    public string DeviceId { get; set; }
 }

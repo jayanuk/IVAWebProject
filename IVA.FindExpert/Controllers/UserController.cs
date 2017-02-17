@@ -116,5 +116,20 @@ namespace IVA.FindExpert.Controllers
             }
             return Ok();
         }
+
+        [HttpPost]
+        [Authorize]
+        public IHttpActionResult AddUserDevice(UserDeviceModel Model)
+        {
+            long ret = 0;
+            using (AppDBContext context = new AppDBContext())
+            {
+                ret = new UserDeviceRepository(context).Add(
+                    new UserDevice { UserId = Model.UserId,
+                        DeviceToken = Model.DeviceToken,
+                        DeviceId = Model.DeviceId });
+            }
+            return Ok(ret);
+        }
     }
 }

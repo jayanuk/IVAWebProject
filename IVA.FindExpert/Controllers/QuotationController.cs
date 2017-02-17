@@ -37,7 +37,11 @@ namespace IVA.FindExpert.Controllers
                         CompanyName = quote.Agent?.Company?.Name,
                         QuotationTemplateName = quote.QuotationTemplate.Name,
                         QuotationText = quote.QuotationText,
-                        Status = quote.Status ?? 0
+                        Status = quote.Status ?? 0,
+                        ServiceRequestCode = quote.ServiceRequest.Code,
+                        ClaimType = quote.ServiceRequest.ClaimType,
+                        VehicleNo = quote.ServiceRequest.VehicleNo,
+                        VehicleValue = quote.ServiceRequest.VehicleValue
                     };
 
                     if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||
@@ -73,9 +77,28 @@ namespace IVA.FindExpert.Controllers
                 }
 
                 var reqRepo = new ServiceRequestRepository(context);
+                var userRepo = new UserRepository(context);
                 var request = quote.ServiceRequest;
+                var buyerName = userRepo.GetName(request.UserId);
                 request.Status = (int)Constant.ServiceRequestStatus.Closed;
                 reqRepo.Update(request);
+
+                MessageModel message = new MessageModel
+                {
+                    MessageText = "Quotation accepted by: " + buyerName,
+                    RequestId = request.Id,
+                    SenderId = request.UserId,
+                    RecieverId = quote.AgentId,
+                    QuotationId = 0
+                };
+                AddMessage(message, context);
+
+                new NotificationRepository(context).Add(
+                          quote.AgentId,
+                          (int)Constant.NotificationType.Accept,
+                          quote.Id,
+                          ConfigurationHelper.NOTIFICATION_TITLE,
+                          Constant.Notification.ACCCEPTED_TEXT);
             }
             return Ok();
         }
@@ -104,15 +127,14 @@ namespace IVA.FindExpert.Controllers
                 {
                     long quoteId = new RequestQuotationRepository(context).Save(quotation);
                     new AgentServiceRequestRepository(context).UpdateResponseTime(model.ServiceRequestId, model.AgentId);
-
+                    var userRepo = new UserRepository(context);
                     var request = new ServiceRequestRepository(context).GetById(model.ServiceRequestId);
                     var agentProfile = new UserProfileRepository(context).GetByUserId(model.AgentId);
-                    var agent = new UserRepository(context).GetByUserId(model.AgentId);
+                    var agent = userRepo.GetByUserId(model.AgentId);
                     var agentName = agent.Name;
                     var company = agent.Company.Name;
                     if (agentProfile != null)
                         agentName = agentProfile.FirstName + " " + agentProfile.LastName;
-
 
                     MessageModel message = new MessageModel
                     {
@@ -123,6 +145,12 @@ namespace IVA.FindExpert.Controllers
                         QuotationId = quoteId
                     };
                     AddMessage(message, context);
+                    new NotificationRepository(context).Add(
+                            message.RecieverId,
+                            (int)Constant.NotificationType.Quotation,
+                            message.QuotationId,
+                            ConfigurationHelper.NOTIFICATION_TITLE,
+                            Constant.Notification.NEW_QUOTATION_TEXT);
                 }
             }
             catch (Exception ex)
@@ -158,6 +186,23 @@ namespace IVA.FindExpert.Controllers
                 var request = quote.ServiceRequest;
                 request.Status = (int)Constant.ServiceRequestStatus.Closed;
                 reqRepo.Update(request);
+                var buyerName = new UserRepository(context).GetName(request.UserId);
+                MessageModel message = new MessageModel
+                {
+                    MessageText = "Quotation accepted by: " + buyerName,
+                    RequestId = request.Id,
+                    SenderId = request.UserId,
+                    RecieverId = quote.AgentId,
+                    QuotationId = 0
+                };
+                AddMessage(message, context);
+
+                new NotificationRepository(context).Add(
+                          quote.AgentId,
+                          (int)Constant.NotificationType.Accept,
+                          quote.Id,
+                          ConfigurationHelper.NOTIFICATION_TITLE,
+                          Constant.Notification.ACCCEPTED_TEXT);
             }
             return Ok();
         }
@@ -179,11 +224,12 @@ namespace IVA.FindExpert.Controllers
                     Time = DateTime.Now.ToUniversalTime()
                 };
 
+                var userRepo = new UserRepository(context);
+                var sender = userRepo.GetByUserId(message.SenderId);
+                var recipient = userRepo.GetByUserId(message.RecieverId);
+
                 if (message.ThreadId == 0)
                 {
-                    var userRepo = new UserRepository(context);
-                    var sender = userRepo.GetByUserId(message.SenderId);
-                    var recipient = userRepo.GetByUserId(message.RecieverId);
                     long agentId = 0;
                     long buyerId = 0;
                     if (sender.UserType == Constant.UserType.BUYER)
@@ -221,6 +267,7 @@ namespace IVA.FindExpert.Controllers
                 }
 
                 Id = new MessageRepository(context).Add(message);
+                
             }
             catch (Exception ex)
             {

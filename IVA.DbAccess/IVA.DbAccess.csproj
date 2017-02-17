@@ -57,6 +57,7 @@
     <Compile Include="Repository\CompanyRepository.cs" />
     <Compile Include="Repository\MessageRepository.cs" />
     <Compile Include="Repository\MessageThreadRepository.cs" />
+    <Compile Include="Repository\NotificationRepository.cs" />
     <Compile Include="Repository\PromotionRepository.cs" />
     <Compile Include="Repository\QuotationTemplateRepository.cs" />
     <Compile Include="Repository\RequestQuotationRepository.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Repository\ServiceRequestHistoryRepository.cs" />
     <Compile Include="Repository\ServiceRequestRepository.cs" />
     <Compile Include="Repository\SettingsRepository.cs" />
+    <Compile Include="Repository\UserDeviceRepository.cs" />
     <Compile Include="Repository\UserFeedbackRepository.cs" />
     <Compile Include="Repository\UserPasscodeRepository.cs" />
     <Compile Include="Repository\UserProfileRepository.cs" />

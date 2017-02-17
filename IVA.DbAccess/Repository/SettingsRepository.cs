@@ -12,5 +12,10 @@ namespace IVA.DbAccess.Repository
         {
 
         }
+
+        public string GetSettingValue(string Key)
+        {
+            return context.Settings.Where(s => s.Key == Key).FirstOrDefault()?.Value;
+        }
     }
 }

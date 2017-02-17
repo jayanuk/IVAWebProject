@@ -35,7 +35,7 @@ namespace IVA.FindExpert.Controllers
                             RequestId = t.RequestId,
                             Date = t.CreatedTime.GetAdjustedTime().ToString("dd/MMM"),
                             Time = t.CreatedTime.GetAdjustedTime().ToString("HH:mm"),
-                            Messages = t.Messages.OrderByDescending(
+                            Messages = t.Messages.OrderBy(
                             m => m.Time).Select(m => new MessageModel
                             {
                                 Id = m.Id,
@@ -66,7 +66,8 @@ namespace IVA.FindExpert.Controllers
                             thread.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
-                        thread.UnreadMessageCount = thread.Messages.Count(m => m.Status == (int)Constant.MessageStatus.Initial);
+                        thread.UnreadMessageCount = thread.Messages.Count(
+                            m => m.Status == (int)Constant.MessageStatus.Initial);
 
                         foreach (var message in thread.Messages)
                         {
@@ -108,7 +109,7 @@ namespace IVA.FindExpert.Controllers
                             RequestId = t.RequestId,
                             Date = t.CreatedTime.GetAdjustedTime().ToString("dd/MMM"),
                             Time = t.CreatedTime.GetAdjustedTime().ToString("HH:mm"),
-                            Messages = t.Messages.OrderByDescending(
+                            Messages = t.Messages.OrderBy(
                             m => m.Time).Select(m => new MessageModel
                             {
                                 Id = m.Id,
@@ -145,7 +146,8 @@ namespace IVA.FindExpert.Controllers
                         var latestMessageWithQuote = thread.Messages.Where(
                             m => m.QuotationId > 0).OrderByDescending(m => m.Id).FirstOrDefault()?.Id;
 
-                        thread.UnreadMessageCount = thread.Messages.Count(m => m.Status == (int)Constant.MessageStatus.Initial);
+                        thread.UnreadMessageCount = thread.Messages.Count(
+                            m => m.Status == (int)Constant.MessageStatus.Initial && m.RecieverId == UserId);
                         
                         foreach (var message in thread.Messages)
                         {
@@ -178,14 +180,16 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
-        public IHttpActionResult GetBuyerThreads(long UserId)
+        public IHttpActionResult GetBuyerThreads(long UserId, int Page)
         {
             List<MessageThreadModel> threads = null;
             try
             {
                 using (AppDBContext context = new AppDBContext())
                 {
-                    var userThreads = new MessageThreadRepository(context).GetByBuyerId(UserId).OrderByDescending(t => t.CreatedTime);
+                    var userThreads = new MessageThreadRepository(context).GetByBuyerId(UserId);
+                    userThreads = userThreads.Skip((Page - 1) * Constant.Paging.MESSAGE_THREADS_PER_PAGE).
+                        Take(Constant.Paging.MESSAGE_THREADS_PER_PAGE).ToList();
                     threads = userThreads.Select(t => new MessageThreadModel
                     {
                         Id = t.Id,
@@ -194,7 +198,7 @@ namespace IVA.FindExpert.Controllers
                         RequestId = t.RequestId,                      
                         Date = t.CreatedTime.GetAdjustedTime().ToString("dd/MMM"),
                         Time = t.CreatedTime.GetAdjustedTime().ToString("HH:mm"),
-                        Messages = t.Messages.OrderByDescending(
+                        Messages = t.Messages.OrderBy(
                             m => m.Time).Select(m => new MessageModel
                             {
                                 Id = m.Id,
@@ -228,7 +232,8 @@ namespace IVA.FindExpert.Controllers
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
                         thread.VehicleNo = request.VehicleNo;
-                        thread.UnreadMessageCount = thread.Messages.Count(m => m.Status == (int)Constant.MessageStatus.Initial);
+                        thread.UnreadMessageCount = thread.Messages.Count(
+                            m => m.Status == (int)Constant.MessageStatus.Initial && m.RecieverId == UserId);
 
                         foreach (var message in thread.Messages)
                         {
@@ -240,28 +245,31 @@ namespace IVA.FindExpert.Controllers
                         }                        
                     }
                     
-                    var promotion = new PromotionRepository(context).GetLatestPromotion(1); //TODO change the type to param
-                    PromotionModel promModel = null;
-
-                    if(promotion != null)
+                    if(Page == 1)
                     {
-                        promModel = new PromotionModel
+                        var promotion = new PromotionRepository(context).GetLatestPromotion(1); //TODO change the type to param
+                        PromotionModel promModel = null;
+
+                        if (promotion != null)
                         {
-                            Id = promotion.Id,
-                            Title = promotion.Title,
-                            Header = promotion.Header,
-                            Description = promotion.Description,
-                            CreatedDate = promotion.CreatedDate?.ToString(Constant.DateFormatType.YYYYMMDD),
-                            Status = promotion.Status ?? 0,
-                            Type = ((promotion.Type ?? 0) == Constant.PromotionType.OFFER) ? "Offers" : "Promotions"
-                        };
-                        MessageThreadModel promotionEntry = new MessageThreadModel();
-                        promotionEntry.Description = promModel.Type;
-                        promotionEntry.Promotion = promModel;
-                        if (threads == null)
-                            threads = new List<MessageThreadModel>();
-                        threads.Insert(0, promotionEntry);
-                    }
+                            promModel = new PromotionModel
+                            {
+                                Id = promotion.Id,
+                                Title = promotion.Title,
+                                Header = promotion.Header,
+                                Description = promotion.Description,
+                                CreatedDate = promotion.CreatedDate?.ToString(Constant.DateFormatType.YYYYMMDD),
+                                Status = promotion.Status ?? 0,
+                                Type = ((promotion.Type ?? 0) == Constant.PromotionType.OFFER) ? "Offers" : "Promotions"
+                            };
+                            MessageThreadModel promotionEntry = new MessageThreadModel();
+                            promotionEntry.Description = promModel.Type;
+                            promotionEntry.Promotion = promModel;
+                            if (threads == null)
+                                threads = new List<MessageThreadModel>();
+                            threads.Insert(0, promotionEntry);
+                        }
+                    }                    
                 }
             }
             catch(Exception ex)
@@ -274,14 +282,16 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
-        public IHttpActionResult GetAgentThreads(long UserId)
+        public IHttpActionResult GetAgentThreads(long UserId, int Page)
         {
             List<MessageThreadModel> threads = null;
             try
             {
                 using (AppDBContext context = new AppDBContext())
                 {
-                    var userThreads = new MessageThreadRepository(context).GetByAgentId(UserId).OrderByDescending(t => t.CreatedTime);
+                    var userThreads = new MessageThreadRepository(context).GetByAgentId(UserId);
+                    userThreads = userThreads.Skip((Page - 1) * Constant.Paging.MESSAGE_THREADS_PER_PAGE).
+                        Take(Constant.Paging.MESSAGE_THREADS_PER_PAGE).ToList();
                     threads = userThreads.Select(t => new MessageThreadModel
                     {
                         Id = t.Id,
@@ -290,7 +300,7 @@ namespace IVA.FindExpert.Controllers
                         RequestId = t.RequestId,
                         Date = t.CreatedTime.GetAdjustedTime().ToString("dd/MMM"),
                         Time = t.CreatedTime.GetAdjustedTime().ToString("HH:mm"),
-                        Messages = t.Messages.OrderByDescending(
+                        Messages = t.Messages.OrderBy(
                             m => m.Time).Select(m => new MessageModel
                             {
                                 Id = m.Id,
@@ -324,7 +334,8 @@ namespace IVA.FindExpert.Controllers
 
                         thread.Description = "Vehicle No: " + request.VehicleNo + " / Request: " + request.Code;
                         thread.VehicleNo = request.VehicleNo;
-                        thread.UnreadMessageCount = thread.Messages.Count(m => m.Status == (int)Constant.MessageStatus.Initial);
+                        thread.UnreadMessageCount = thread.Messages.Count(
+                            m => m.Status == (int)Constant.MessageStatus.Initial && m.RecieverId == UserId);
 
                         foreach (var message in thread.Messages)
                         {
@@ -393,11 +404,12 @@ namespace IVA.FindExpert.Controllers
 
                 using (AppDBContext context = new AppDBContext())
                 {
-                    if(message.ThreadId == 0)
-                    {
-                        var userRepo = new UserRepository(context);
-                        var sender = userRepo.GetByUserId(message.SenderId);
-                        var recipient = userRepo.GetByUserId(message.RecieverId);
+                    var userRepo = new UserRepository(context);
+                    var sender = userRepo.GetByUserId(message.SenderId);
+                    var recipient = userRepo.GetByUserId(message.RecieverId);
+
+                    if (message.ThreadId == 0)
+                    {   
                         long agentId = 0;
                         long buyerId = 0;
                         if (sender.UserType == Constant.UserType.BUYER)
@@ -432,11 +444,20 @@ namespace IVA.FindExpert.Controllers
                         else
                         {
                             message.ThreadId = existingthread.Id;
-                        }                        
+                        }  
+                    }
+
+                    if (sender.UserType == Constant.UserType.BUYER)
+                    {
+                        new ServiceRequestRepository(context).UpdateBuyerResponded(Model.RequestId);
                     }
 
                     Id = new MessageRepository(context).Add(message);
-                    
+                    new NotificationRepository(context).Add(
+                           recipient.Id,
+                           (int)Constant.NotificationType.Message,
+                           message.ThreadId, ConfigurationHelper.NOTIFICATION_TITLE,
+                           Constant.Notification.NEW_MESSAGE_TEXT);
                 }
             }
             catch(Exception ex)

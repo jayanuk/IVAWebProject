@@ -32,12 +32,65 @@ namespace IVA.DbAccess.Repository
             return serviceRequests;
         }
 
+        public List<IServiceRequest> GetPendingByAgentId(long AgentId)
+        {
+            var agentRequests = new AgentServiceRequestRepository(context).GetPendingByAgentId(AgentId);
+            var serviceRequests = agentRequests.Select(a => a.ServiceRequest).ToList<IServiceRequest>();
+            return serviceRequests;
+        }
+
+        public int GetPendingByAgentIdCount(long AgentId)
+        {
+            var agentRequests = new AgentServiceRequestRepository(context).GetPendingByAgentId(AgentId);
+            int count = agentRequests.Where(ar => ar.Status == (int)Constant.ServiceRequestStatus.Initial).Count();
+            return count;
+        }
+
+        public List<IServiceRequest> GetFollowUpByAgentId(long AgentId)
+        {
+            var agentRequests = new AgentServiceRequestRepository(context).GetForFollowUpByAgentId(AgentId);
+            var serviceRequests = agentRequests.Select(a => a.ServiceRequest).ToList<IServiceRequest>().
+                    Where(r => r.TimeOccured.AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).AddHours(-ConfigurationHelper.HOURS_TO_FOLLOW_UP) <= DateTime.UtcNow).ToList();
+          
+            return serviceRequests;
+        }
+
+        public List<IServiceRequest> GetFollowUpByBuyerId(long BuyerId)
+        {
+            //var serviceRequests = context.ServiceRequests.Where(
+            //    r => !(r.BuyerResponded ?? false) && r.UserId == BuyerId && 
+            //    r.Status != (int)Constant.ServiceRequestStatus.Closed && 
+            //    r.Status != (int)Constant.ServiceRequestStatus.Expired).ToList().Where( 
+            //    r =>r.TimeOccured.AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST) > DateTime.UtcNow &&
+            //    r.TimeOccured.AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).AddHours(-ConfigurationHelper.HOURS_TO_FOLLOW_UP) <= DateTime.UtcNow).ToList();
+
+            var serviceRequests = from sr in context.ServiceRequests.Where(
+                                    r => r.UserId == BuyerId &&
+                                    r.Status != (int)Constant.ServiceRequestStatus.Closed &&
+                                    r.Status != (int)Constant.ServiceRequestStatus.Expired)
+                                    join q in context.RequestQuotations on sr.Id equals q.ServiceRequestId
+                                    where sr.UserId == BuyerId && q.Status == (int)Constant.QuotationStatus.Initial
+                                    select sr;
+
+            return serviceRequests.ToList<IServiceRequest>();
+        }
+
+        public void UpdateBuyerResponded(long RequestId)
+        {
+            var request = context.ServiceRequests.Where(r => r.Id == RequestId).FirstOrDefault();
+            if(request != null)
+            {
+                request.BuyerResponded = true;
+                context.SaveChanges();
+            }
+        }
+
         public long Add(ServiceRequest ServiceRequestInstance)
         {
             ServiceRequest sr = new ServiceRequest();
             sr.InsuranceTypeId = ServiceRequestInstance.InsuranceTypeId;
             sr.Code = ServiceRequestInstance.Code;            
-            sr.Status = (int)Constant.ServiceRequestStatus.PendingResponse;
+            sr.Status = (int)Constant.ServiceRequestStatus.Initial;
             sr.ClaimType = ServiceRequestInstance.ClaimType;
             sr.RegistrationCategory = ServiceRequestInstance.RegistrationCategory;
             sr.UsageType = ServiceRequestInstance.UsageType;            
@@ -95,6 +148,11 @@ namespace IVA.DbAccess.Repository
             var existing = context.RequestQuotations.Where(q => q.ServiceRequestId == Quotation.ServiceRequestId).FirstOrDefault();
             if(existing == null)
                 context.RequestQuotations.Add(Quotation);
+        }
+
+        public int GetPendingRequestCount(long AgentId)
+        {
+            return GetPendingByAgentIdCount(AgentId);
         }
     }
 }

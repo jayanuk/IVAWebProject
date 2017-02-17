@@ -45,12 +45,14 @@ namespace IVA.DbAccess.Repository
 
         public List<IMessageThread> GetByBuyerId(long BuyerId)
         {
-            return context.MessageThreads.Where(m => m.BuyerId == BuyerId).ToList<IMessageThread>();
+            return context.MessageThreads.Where(m => m.BuyerId == BuyerId).
+                OrderByDescending(t => t.CreatedTime).ToList<IMessageThread>();
         }
 
         public List<IMessageThread> GetByAgentId(long AgentId)
         {
-            return context.MessageThreads.Where(m => m.AgentId == AgentId).ToList<IMessageThread>();
+            return context.MessageThreads.Where(m => m.AgentId == AgentId).
+                OrderByDescending(t => t.CreatedTime).ToList<IMessageThread>();
         }
 
         public IMessageThread GetByAgentAndRequest(long AgentId, long RequestId)

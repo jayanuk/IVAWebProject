@@ -29,6 +29,9 @@ namespace IVA.DbAccess
         public DbSet<RequestQuotation> RequestQuotations { get; set; }
         public DbSet<AgentServiceRequest> AgentServiceRequests { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserDevice> UserDevices { get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
         public AppDBContext()
            : base(Constant.DEFAULT_DB_CONNECTION)

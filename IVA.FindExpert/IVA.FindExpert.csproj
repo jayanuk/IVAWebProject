@@ -308,12 +308,11 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\business-casual.css" />
-    <Content Include="Images\slide-1.jpg" />
-    <Content Include="Images\slide-2.jpg" />
-    <Content Include="Images\slide-3.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Images\slide-1.png" />
+    <Content Include="Images\slide-2.png" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\bootstrap.js" />

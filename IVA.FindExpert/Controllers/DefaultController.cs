@@ -41,5 +41,16 @@ namespace IVA.FindExpert.Controllers.WebAPI
             }
             return Ok(list);
         }
+
+        [HttpGet]
+        public IHttpActionResult GetCities(string Text)
+        {            
+            List<City> list = null;
+            using (AppDBContext context = new AppDBContext())
+            {
+                list = new CityRepository(context).GetCities(Text);
+            }
+            return Ok(list);
+        }
     }
 }

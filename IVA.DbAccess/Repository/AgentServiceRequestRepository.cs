@@ -27,8 +27,8 @@ namespace IVA.DbAccess.Repository
         {
             var result = context.AgentServiceRequests.Where(
                 i => i.AgentId == AgentId &&
-                i.Status == (int)Constant.ServiceRequestStatus.Initial &&
-                i.Status != (int)Constant.ServiceRequestStatus.Expired).ToList();
+                (i.Status == (int)Constant.ServiceRequestStatus.SellerResponded || i.Status == (int)Constant.ServiceRequestStatus.Closed) &&
+                i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Expired).ToList();
             return result.Distinct<AgentServiceRequest>(new AgentServiceRequestComparer()).ToList();
         }
 
@@ -36,7 +36,7 @@ namespace IVA.DbAccess.Repository
         {
             return context.AgentServiceRequests.Where(
                 i => i.AgentId == AgentId &&
-                i.Status == (int)Constant.ServiceRequestStatus.PendingResponse &&
+                (i.Status == (int)Constant.ServiceRequestStatus.PendingResponse || i.Status == (int)Constant.ServiceRequestStatus.Initial) &&
                  (i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Closed &&
                 i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Expired)).ToList<IAgentServiceRequest>();
         }

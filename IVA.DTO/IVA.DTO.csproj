@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Agent.cs" />
     <Compile Include="AgentServiceRequest.cs" />
+    <Compile Include="City.cs" />
     <Compile Include="Company.cs" />
     <Compile Include="Contract\IAgentServiceRequest.cs" />
     <Compile Include="Contract\IAgentUser.cs" />

@@ -24,6 +24,7 @@ namespace IVA.DTO
         public bool IsFinanced { get; set; }
         public int Status { get; set; }
         public bool? BuyerResponded { get; set; }
+        public string Location { get; set; }
 
         virtual public List<VehicleImage> Images { get; set; }
         virtual public List<RequestQuotation> QuotationList { get; set; }

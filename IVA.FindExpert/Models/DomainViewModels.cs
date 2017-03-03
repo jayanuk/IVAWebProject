@@ -80,7 +80,7 @@ public class ServiceRequestModel
     public string BuyerMobile { get; set; }
     public string BuyerPhone { get; set; }
     public bool IsAllowPhone { get; set; }
-    public string City { get; set; }
+    public string Location { get; set; }
 
     public string TimeToExpire { get; set; }
     public bool IsFollowUp { get; set; }

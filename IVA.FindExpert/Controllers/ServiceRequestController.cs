@@ -231,12 +231,13 @@ namespace IVA.FindExpert.Controllers
                     UsageType = request.UsageType,
                     RegistrationCategory = request.RegistrationCategory,
                     VehicleNo = request.VehicleNo,
-                    VehicleValue = request.VehicleValue, 
+                    VehicleValue = request.VehicleValue,
                     VehicleYear = request.VehicleYear,
                     IsFinanced = request.IsFinanced,
                     Status = request.Status,
                     ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                    QuotationList = GetServiceQuotations(request.Id)
+                    QuotationList = GetServiceQuotations(request.Id),
+                    Location = request.Location
                 };
 
                 if(buyer != null)
@@ -249,7 +250,8 @@ namespace IVA.FindExpert.Controllers
                     {
                         model.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
                         model.BuyerPhone = buyerProfile.Phone;
-                        model.City = buyerProfile.City;
+                        if(String.IsNullOrEmpty(model.Location))
+                            model.Location = buyerProfile.City;
                         if (buyerProfile.ContactMethod != (int)Constant.ContactMethod.Message)
                             model.IsAllowPhone = true;
                     }
@@ -292,7 +294,8 @@ namespace IVA.FindExpert.Controllers
                     IsFinanced = request.IsFinanced,
                     Status = request.Status,
                     ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                    QuotationList = GetServiceQuotations(request.Id)
+                    QuotationList = GetServiceQuotations(request.Id),
+                    Location = request.Location
                 };
 
                 if (buyer != null)
@@ -305,7 +308,8 @@ namespace IVA.FindExpert.Controllers
                     {
                         model.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
                         model.BuyerPhone = buyerProfile.Phone;
-                        model.City = buyerProfile.City;
+                        if (String.IsNullOrEmpty(model.Location))
+                            model.Location = buyerProfile.City;
                         if (buyerProfile.ContactMethod != (int)Constant.ContactMethod.Message)
                             model.IsAllowPhone = true;
                     }
@@ -331,6 +335,7 @@ namespace IVA.FindExpert.Controllers
             SR.VehicleValue = Model.VehicleValue;
             SR.VehicleYear = Model.VehicleYear;
             SR.IsFinanced = Model.IsFinanced;
+            SR.Location = Model.Location;
             //SR.Images = Model.Images;
 
             using (AppDBContext context = new AppDBContext())

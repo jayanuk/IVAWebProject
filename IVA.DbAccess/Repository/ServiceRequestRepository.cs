@@ -100,7 +100,7 @@ namespace IVA.DbAccess.Repository
             sr.VehicleYear = ServiceRequestInstance.VehicleYear;
             sr.TimeOccured = DateTime.Now.ToUniversalTime();
             sr.IsFinanced = ServiceRequestInstance.IsFinanced;
-
+            sr.Location = ServiceRequestInstance.Location;
             context.ServiceRequests.Add(sr);
             context.SaveChanges();
             UpdateSRCode(sr.Id);
@@ -122,7 +122,7 @@ namespace IVA.DbAccess.Repository
             sr.VehicleValue = ServiceRequestInstance.VehicleValue;
             sr.VehicleYear = ServiceRequestInstance.VehicleYear;
             sr.IsFinanced = ServiceRequestInstance.IsFinanced;
-
+            sr.Location = ServiceRequestInstance.Location;
             context.SaveChanges();
         }
 

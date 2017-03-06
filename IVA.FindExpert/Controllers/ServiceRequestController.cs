@@ -418,44 +418,52 @@ namespace IVA.FindExpert.Controllers
                 using (AppDBContext context = new AppDBContext())
                 {
                     var companies = new CompanyRepository(context).GetAll();
+                    var request = new ServiceRequestRepository(context).GetById(ServiceRequestId);
+                    var agentServiceRepo = new AgentServiceRequestRepository(context);
 
                     foreach (var company in companies)
                     {
-                        //get agents for each company
-                        var agents = new UserRepository(context).GetAgentsByCompany(company.Id);
-
-                        if (agents == null)
-                            continue;
-
-                        Dictionary<long, int> counts = new Dictionary<long, int>();
-
-                        foreach (var agent in agents)
+                        //Check vehicle number is recently serviced
+                        var agentId = agentServiceRepo.GetAgentIdIfServicedRecently(request.VehicleNo, company.Id);
+                        if(agentId == 0)
                         {
-                            //get open requests for each agent
-                            var agentRequests = new AgentServiceRequestRepository(context).GetByAgentId(agent.Id)?.Where(
-                                r => (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Closed ||
-                                    (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Expired);
-                            if (agentRequests != null)
-                                counts.Add(agent.Id, agentRequests.Count());
-                            else
-                                counts.Add(agent.Id, 0);
-                        }
+                            //get agents for each company
+                            var agents = new UserRepository(context).GetAgentsByCompany(company.Id);
 
-                        //find agent with min no of requests
-                        //order by id asc and get top 1 agent
-                        var item = counts.OrderBy(i => i.Value).ThenBy(i => i.Key).First();
+                            if (agents == null)
+                                continue;
+
+                            Dictionary<long, int> counts = new Dictionary<long, int>();
+
+                            foreach (var agent in agents)
+                            {
+                                //get open requests for each agent
+                                var agentRequests = agentServiceRepo.GetByAgentId(agent.Id)?.Where(
+                                    r => (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Closed ||
+                                        (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Expired);
+                                if (agentRequests != null)
+                                    counts.Add(agent.Id, agentRequests.Count());
+                                else
+                                    counts.Add(agent.Id, 0);
+                            }
+
+                            //find agent with min no of requests
+                            //order by id asc and get top 1 agent
+                            var item = counts.OrderBy(i => i.Value).ThenBy(i => i.Key).First();
+                            agentId = item.Key;
+                        }                        
 
                         //assign the request to agent
                         AgentServiceRequest asr = new AgentServiceRequest
                         {
-                            AgentId = item.Key,
+                            AgentId = agentId,
                             ServiceRequestId = ServiceRequestId,
                             Status = (int)Constant.ServiceRequestStatus.Initial,
                             CreatedTime = DateTime.Now.ToUniversalTime()
                         };
 
-                        new AgentServiceRequestRepository(context).Add(asr);
-                        var request = new ServiceRequestRepository(context).GetById(ServiceRequestId);
+                        agentServiceRepo.Add(asr);
+                        
                         new NotificationRepository(context).Add(
                             asr.AgentId,
                             (int)Constant.NotificationType.Request,

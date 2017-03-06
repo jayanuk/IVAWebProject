@@ -79,5 +79,30 @@ namespace IVA.DbAccess.Repository
             }
         }
 
+        public long GetAgentIdIfServicedRecently(string VehicleNo, int CompanyId)
+        {
+            if (!String.IsNullOrEmpty(VehicleNo))
+                VehicleNo = VehicleNo.Trim();
+            var cutoffDate = DateTime.UtcNow.AddMonths(-2);
+            //Check to see if there is one who took action for vehicle no
+            long? result = (from sr in context.ServiceRequests.Where(r => r.VehicleNo == VehicleNo)
+                         join asr in context.AgentServiceRequests on sr.Id equals asr.ServiceRequestId
+                         join user in context.Users on asr.AgentId equals user.Id
+                         join quote in context.RequestQuotations on asr.AgentId equals quote.AgentId
+                         where quote.ServiceRequestId == sr.Id && user.CompanyId == CompanyId && sr.TimeOccured > cutoffDate
+                         orderby asr.CreatedTime ascending
+                         select asr.AgentId).FirstOrDefault();
+            //If there is none who took action then get the first one
+            if( result == null || result == 0)
+                result = (from sr in context.ServiceRequests.Where(r => r.VehicleNo == VehicleNo)
+                          join asr in context.AgentServiceRequests on sr.Id equals asr.ServiceRequestId
+                          join user in context.Users on asr.AgentId equals user.Id                          
+                          where user.CompanyId == CompanyId && sr.TimeOccured > cutoffDate
+                          orderby asr.CreatedTime ascending
+                          select asr.AgentId).FirstOrDefault();
+            return result ?? 0;
+
+        }
+
     }
 }

@@ -58,6 +58,7 @@
     <Compile Include="Contract\IAgentUser.cs" />
     <Compile Include="Contract\IClaimType.cs" />
     <Compile Include="Contract\ICompany.cs" />
+    <Compile Include="Contract\ICustomerSupportType.cs" />
     <Compile Include="Contract\IInsuranceType.cs" />
     <Compile Include="Contract\IMessageThread.cs" />
     <Compile Include="Contract\IPromotion.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Contract\IUser.cs" />
     <Compile Include="Contract\IVehicleImage.cs" />
     <Compile Include="Contract\IServiceRequestHistory.cs" />
+    <Compile Include="CustomerSupportType.cs" />
     <Compile Include="MessageThread.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Promotion.cs" />

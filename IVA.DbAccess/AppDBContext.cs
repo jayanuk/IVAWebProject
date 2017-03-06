@@ -33,6 +33,7 @@ namespace IVA.DbAccess
         public DbSet<UserDevice> UserDevices { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<CustomerSupportType> CustomerSupportTypes { get; set; }
 
         public AppDBContext()
            : base(Constant.DEFAULT_DB_CONNECTION)

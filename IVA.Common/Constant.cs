@@ -60,7 +60,8 @@ namespace IVA.Common
         {
             Initial = 1,
             Accepted = 2,
-            Closed = 3
+            Closed = 3,
+            Checked = 4
         }
         
         public struct ChatGroup

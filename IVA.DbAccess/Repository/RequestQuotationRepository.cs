@@ -1,4 +1,5 @@
-﻿using IVA.DTO;
+﻿using IVA.Common;
+using IVA.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,6 +65,17 @@ namespace IVA.DbAccess.Repository
                 existing.Cover = Quotation.Cover;
                 existing.QuotationTemplateId = Quotation.QuotationTemplateId;
 
+                context.SaveChanges();
+            }
+        }
+
+        public void UpdateToChecked(long QuotationId)
+        {
+            var existing = context.RequestQuotations.Where(q => q.Id == QuotationId).FirstOrDefault();
+            if (existing != null)
+            {
+                existing.ModifiedTime = DateTime.Now.ToUniversalTime();
+                existing.Status = (int)Constant.QuotationStatus.Checked;
                 context.SaveChanges();
             }
         }

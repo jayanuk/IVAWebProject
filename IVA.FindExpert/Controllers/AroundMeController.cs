@@ -1,4 +1,5 @@
-﻿using IVA.DbAccess;
+﻿using Core.Log;
+using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
 using IVA.DTO.Contract;
@@ -28,6 +29,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch(Exception ex)
             {
+                Logger.Log(typeof(AroundMeController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
             return Ok(categories);
@@ -51,6 +53,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(AroundMeController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
             return Ok(providers);

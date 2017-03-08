@@ -39,13 +39,20 @@ namespace IVA.FindExpert.Controllers.WebAPI
 
         [HttpGet]
         public IHttpActionResult Company()
-        {
-            //ServiceRequestController.AssignRequestToAgents(5);
+        {            
             List<ICompany> list = null;
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                list = new CompanyRepository(context).GetAll();
+                using (AppDBContext context = new AppDBContext())
+                {
+                    list = new CompanyRepository(context).GetAll();
+                }
             }
+            catch(Exception ex)
+            {
+                Logger.Log(typeof(DefaultController), ex.Message, LogType.ERROR);
+            }
+            
             return Ok(list);
         }
 
@@ -53,10 +60,18 @@ namespace IVA.FindExpert.Controllers.WebAPI
         public IHttpActionResult GetCities(string Text)
         {            
             List<City> list = null;
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                list = new CityRepository(context).GetCities(Text);
+                using (AppDBContext context = new AppDBContext())
+                {
+                    list = new CityRepository(context).GetCities(Text);
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(DefaultController), ex.Message, LogType.ERROR);
+            }
+            
             return Ok(list);
         }
 
@@ -64,10 +79,18 @@ namespace IVA.FindExpert.Controllers.WebAPI
         public IHttpActionResult GetCustomerSupportTypes()
         {
             List<ICustomerSupportType> list = null;
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                list = new CustomerSupportTypeRepository(context).GetAll();
+                using (AppDBContext context = new AppDBContext())
+                {
+                    list = new CustomerSupportTypeRepository(context).GetAll();
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(DefaultController), ex.Message, LogType.ERROR);
+            }
+           
             return Ok(list);
         }
     }

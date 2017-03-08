@@ -56,6 +56,52 @@ namespace IVA.FindExpert.Controllers
             return Ok(model);
         }
 
+        [HttpGet]
+        [Authorize]
+        public IHttpActionResult GetByIdFromBuyer(long Id)
+        {
+            RequestQuotationViewModel model = null;
+
+            using (AppDBContext context = new AppDBContext())
+            {
+                var quote = new RequestQuotationRepository(context).GetById(Id);
+                if (quote != null)
+                {
+                    model = new RequestQuotationViewModel
+                    {
+                        Id = quote.Id,
+                        ServiceRequestId = quote.ServiceRequestId,
+                        QuotationTemplateId = quote.QuotationTemplateId,
+                        Premimum = quote.Premimum?.ToString("#,##0.00"),
+                        Cover = quote.Cover?.ToString("#,##0.00"),
+                        AgentId = quote.AgentId,
+                        AgentName = quote.Agent?.Name,
+                        AgentContact = quote.Agent?.UserName,
+                        CompanyId = quote.Agent?.CompanyId ?? 0,
+                        CompanyName = quote.Agent?.Company?.Name,
+                        QuotationTemplateName = quote.QuotationTemplate.Name,
+                        QuotationText = quote.QuotationText,
+                        Status = quote.Status ?? 0,
+                        ServiceRequestCode = quote.ServiceRequest.Code,
+                        ClaimType = quote.ServiceRequest.ClaimType,
+                        VehicleNo = quote.ServiceRequest.VehicleNo,
+                        VehicleValue = quote.ServiceRequest.VehicleValue
+                    };
+
+                    if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||
+                        quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Expired)
+                        model.Status = (int)Constant.QuotationStatus.Closed;
+
+                    var messageThread = new MessageThreadRepository(context).GetByAgentAndRequest(model.AgentId, model.ServiceRequestId);
+                    if (messageThread != null)
+                        model.ThreadId = messageThread.Id;
+
+                    new RequestQuotationRepository(context).UpdateToChecked(quote.Id);
+                }
+            }
+            return Ok(model);
+        }
+
         [HttpPost]
         [Authorize]
         public IHttpActionResult Accept(long QuotationId)

@@ -12,6 +12,7 @@ using System.Web.Http;
 using IVA.FindExpert.Models;
 using Microsoft.AspNet.Identity;
 using static IVA.Common.Constant;
+using Core.Log;
 
 namespace IVA.FindExpert.Controllers
 {
@@ -61,6 +62,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(SellerController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError();
             }
 

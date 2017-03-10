@@ -1,4 +1,5 @@
-﻿using IVA.Common;
+﻿using Core.Log;
+using IVA.Common;
 using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
@@ -19,41 +20,50 @@ namespace IVA.FindExpert.Controllers
         {
             RequestQuotationViewModel model = null;
 
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                var quote = new RequestQuotationRepository(context).GetById(Id);
-                if (quote != null)
+                using (AppDBContext context = new AppDBContext())
                 {
-                    model = new RequestQuotationViewModel {
-                        Id = quote.Id,
-                        ServiceRequestId = quote.ServiceRequestId,
-                        QuotationTemplateId = quote.QuotationTemplateId,
-                        Premimum = quote.Premimum?.ToString("#,##0.00"),
-                        Cover = quote.Cover?.ToString("#,##0.00"),
-                        AgentId = quote.AgentId,
-                        AgentName = quote.Agent?.Name,
-                        AgentContact = quote.Agent?.UserName,
-                        CompanyId = quote.Agent?.CompanyId ?? 0,
-                        CompanyName = quote.Agent?.Company?.Name,
-                        QuotationTemplateName = quote.QuotationTemplate.Name,
-                        QuotationText = quote.QuotationText,
-                        Status = quote.Status ?? 0,
-                        ServiceRequestCode = quote.ServiceRequest.Code,
-                        ClaimType = quote.ServiceRequest.ClaimType,
-                        VehicleNo = quote.ServiceRequest.VehicleNo,
-                        VehicleValue = quote.ServiceRequest.VehicleValue
-                    };
+                    var quote = new RequestQuotationRepository(context).GetById(Id);
+                    if (quote != null)
+                    {
+                        model = new RequestQuotationViewModel
+                        {
+                            Id = quote.Id,
+                            ServiceRequestId = quote.ServiceRequestId,
+                            QuotationTemplateId = quote.QuotationTemplateId,
+                            Premimum = quote.Premimum?.ToString("#,##0.00"),
+                            Cover = quote.Cover?.ToString("#,##0.00"),
+                            AgentId = quote.AgentId,
+                            AgentName = quote.Agent?.Name,
+                            AgentContact = quote.Agent?.UserName,
+                            CompanyId = quote.Agent?.CompanyId ?? 0,
+                            CompanyName = quote.Agent?.Company?.Name,
+                            QuotationTemplateName = quote.QuotationTemplate.Name,
+                            QuotationText = quote.QuotationText,
+                            Status = quote.Status ?? 0,
+                            ServiceRequestCode = quote.ServiceRequest.Code,
+                            ClaimType = quote.ServiceRequest.ClaimType,
+                            VehicleNo = quote.ServiceRequest.VehicleNo,
+                            VehicleValue = quote.ServiceRequest.VehicleValue
+                        };
 
-                    if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||
-                        quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Expired)
-                        model.Status = (int)Constant.QuotationStatus.Closed;
+                        if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||
+                            quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Expired)
+                            model.Status = (int)Constant.QuotationStatus.Closed;
 
                         var messageThread = new MessageThreadRepository(context).GetByAgentAndRequest(model.AgentId, model.ServiceRequestId);
-                    if(messageThread != null)
-                        model.ThreadId = messageThread.Id;
+                        if (messageThread != null)
+                            model.ThreadId = messageThread.Id;
+                    }
                 }
+                return Ok(model);
             }
-            return Ok(model);
+            catch(Exception ex)
+            {
+                Logger.Log(typeof(QuotationController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpGet]
@@ -62,91 +72,107 @@ namespace IVA.FindExpert.Controllers
         {
             RequestQuotationViewModel model = null;
 
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                var quote = new RequestQuotationRepository(context).GetById(Id);
-                if (quote != null)
+                using (AppDBContext context = new AppDBContext())
                 {
-                    model = new RequestQuotationViewModel
+                    var quote = new RequestQuotationRepository(context).GetById(Id);
+                    if (quote != null)
                     {
-                        Id = quote.Id,
-                        ServiceRequestId = quote.ServiceRequestId,
-                        QuotationTemplateId = quote.QuotationTemplateId,
-                        Premimum = quote.Premimum?.ToString("#,##0.00"),
-                        Cover = quote.Cover?.ToString("#,##0.00"),
-                        AgentId = quote.AgentId,
-                        AgentName = quote.Agent?.Name,
-                        AgentContact = quote.Agent?.UserName,
-                        CompanyId = quote.Agent?.CompanyId ?? 0,
-                        CompanyName = quote.Agent?.Company?.Name,
-                        QuotationTemplateName = quote.QuotationTemplate.Name,
-                        QuotationText = quote.QuotationText,
-                        Status = quote.Status ?? 0,
-                        ServiceRequestCode = quote.ServiceRequest.Code,
-                        ClaimType = quote.ServiceRequest.ClaimType,
-                        VehicleNo = quote.ServiceRequest.VehicleNo,
-                        VehicleValue = quote.ServiceRequest.VehicleValue
-                    };
+                        model = new RequestQuotationViewModel
+                        {
+                            Id = quote.Id,
+                            ServiceRequestId = quote.ServiceRequestId,
+                            QuotationTemplateId = quote.QuotationTemplateId,
+                            Premimum = quote.Premimum?.ToString("#,##0.00"),
+                            Cover = quote.Cover?.ToString("#,##0.00"),
+                            AgentId = quote.AgentId,
+                            AgentName = quote.Agent?.Name,
+                            AgentContact = quote.Agent?.UserName,
+                            CompanyId = quote.Agent?.CompanyId ?? 0,
+                            CompanyName = quote.Agent?.Company?.Name,
+                            QuotationTemplateName = quote.QuotationTemplate.Name,
+                            QuotationText = quote.QuotationText,
+                            Status = quote.Status ?? 0,
+                            ServiceRequestCode = quote.ServiceRequest.Code,
+                            ClaimType = quote.ServiceRequest.ClaimType,
+                            VehicleNo = quote.ServiceRequest.VehicleNo,
+                            VehicleValue = quote.ServiceRequest.VehicleValue
+                        };
 
-                    if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||
-                        quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Expired)
-                        model.Status = (int)Constant.QuotationStatus.Closed;
+                        if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||
+                            quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Expired)
+                            model.Status = (int)Constant.QuotationStatus.Closed;
 
-                    var messageThread = new MessageThreadRepository(context).GetByAgentAndRequest(model.AgentId, model.ServiceRequestId);
-                    if (messageThread != null)
-                        model.ThreadId = messageThread.Id;
+                        var messageThread = new MessageThreadRepository(context).GetByAgentAndRequest(model.AgentId, model.ServiceRequestId);
+                        if (messageThread != null)
+                            model.ThreadId = messageThread.Id;
 
-                    new RequestQuotationRepository(context).UpdateToChecked(quote.Id);
+                        new RequestQuotationRepository(context).UpdateToChecked(quote.Id);
+                    }
                 }
+                return Ok(model);
             }
-            return Ok(model);
+            catch(Exception ex)
+            {
+                Logger.Log(typeof(QuotationController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpPost]
         [Authorize]
         public IHttpActionResult Accept(long QuotationId)
         {
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                var repo = new RequestQuotationRepository(context);
-                var quote = repo.GetById(QuotationId);
-                quote.Status = (int)Constant.QuotationStatus.Accepted;
-                repo.Update(quote);
-                var otherQuotes = repo.GetByRequest(quote.ServiceRequestId)?.Where(q => q.Id != quote.Id);
-                if (otherQuotes != null)
+                using (AppDBContext context = new AppDBContext())
                 {
-                    foreach(var q in otherQuotes)
+                    var repo = new RequestQuotationRepository(context);
+                    var quote = repo.GetById(QuotationId);
+                    quote.Status = (int)Constant.QuotationStatus.Accepted;
+                    repo.Update(quote);
+                    var otherQuotes = repo.GetByRequest(quote.ServiceRequestId)?.Where(q => q.Id != quote.Id);
+                    if (otherQuotes != null)
                     {
-                        q.Status = (int)Constant.QuotationStatus.Closed;
-                        repo.Update(q);
+                        foreach (var q in otherQuotes)
+                        {
+                            q.Status = (int)Constant.QuotationStatus.Closed;
+                            repo.Update(q);
+                        }
                     }
+
+                    var reqRepo = new ServiceRequestRepository(context);
+                    var userRepo = new UserRepository(context);
+                    var request = quote.ServiceRequest;
+                    var buyerName = userRepo.GetName(request.UserId);
+                    request.Status = (int)Constant.ServiceRequestStatus.Closed;
+                    reqRepo.Update(request);
+
+                    MessageModel message = new MessageModel
+                    {
+                        MessageText = "Quotation accepted by: " + buyerName,
+                        RequestId = request.Id,
+                        SenderId = request.UserId,
+                        RecieverId = quote.AgentId,
+                        QuotationId = 0
+                    };
+                    AddMessage(message, context);
+
+                    new NotificationRepository(context).Add(
+                              quote.AgentId,
+                              (int)Constant.NotificationType.Accept,
+                              quote.Id,
+                              ConfigurationHelper.NOTIFICATION_TITLE,
+                              Constant.Notification.ACCCEPTED_TEXT);
                 }
-
-                var reqRepo = new ServiceRequestRepository(context);
-                var userRepo = new UserRepository(context);
-                var request = quote.ServiceRequest;
-                var buyerName = userRepo.GetName(request.UserId);
-                request.Status = (int)Constant.ServiceRequestStatus.Closed;
-                reqRepo.Update(request);
-
-                MessageModel message = new MessageModel
-                {
-                    MessageText = "Quotation accepted by: " + buyerName,
-                    RequestId = request.Id,
-                    SenderId = request.UserId,
-                    RecieverId = quote.AgentId,
-                    QuotationId = 0
-                };
-                AddMessage(message, context);
-
-                new NotificationRepository(context).Add(
-                          quote.AgentId,
-                          (int)Constant.NotificationType.Accept,
-                          quote.Id,
-                          ConfigurationHelper.NOTIFICATION_TITLE,
-                          Constant.Notification.ACCCEPTED_TEXT);
+                return Ok();
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(QuotationController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpPost]
@@ -201,7 +227,8 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
-                InternalServerError(ex);
+                Logger.Log(typeof(QuotationController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
             }
 
             return Ok();
@@ -211,46 +238,54 @@ namespace IVA.FindExpert.Controllers
         [Authorize]
         public IHttpActionResult AcceptByMessageThread(long ThreadId)
         {
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                var thread = new MessageThreadRepository(context).GetById(ThreadId);
-                var repo = new RequestQuotationRepository(context);
-                var quote = repo.GetByRequestAndAgent(thread.RequestId, thread.AgentId);
-                quote.Status = (int)Constant.QuotationStatus.Accepted;
-                repo.Update(quote);
-                var otherQuotes = repo.GetByRequest(quote.ServiceRequestId)?.Where(q => q.Id != quote.Id);
-                if (otherQuotes != null)
+                using (AppDBContext context = new AppDBContext())
                 {
-                    foreach (var q in otherQuotes)
+                    var thread = new MessageThreadRepository(context).GetById(ThreadId);
+                    var repo = new RequestQuotationRepository(context);
+                    var quote = repo.GetByRequestAndAgent(thread.RequestId, thread.AgentId);
+                    quote.Status = (int)Constant.QuotationStatus.Accepted;
+                    repo.Update(quote);
+                    var otherQuotes = repo.GetByRequest(quote.ServiceRequestId)?.Where(q => q.Id != quote.Id);
+                    if (otherQuotes != null)
                     {
-                        q.Status = (int)Constant.QuotationStatus.Closed;
-                        repo.Update(q);
+                        foreach (var q in otherQuotes)
+                        {
+                            q.Status = (int)Constant.QuotationStatus.Closed;
+                            repo.Update(q);
+                        }
                     }
+
+                    var reqRepo = new ServiceRequestRepository(context);
+                    var request = quote.ServiceRequest;
+                    request.Status = (int)Constant.ServiceRequestStatus.Closed;
+                    reqRepo.Update(request);
+                    var buyerName = new UserRepository(context).GetName(request.UserId);
+                    MessageModel message = new MessageModel
+                    {
+                        MessageText = "Quotation accepted by: " + buyerName,
+                        RequestId = request.Id,
+                        SenderId = request.UserId,
+                        RecieverId = quote.AgentId,
+                        QuotationId = 0
+                    };
+                    AddMessage(message, context);
+
+                    new NotificationRepository(context).Add(
+                              quote.AgentId,
+                              (int)Constant.NotificationType.Accept,
+                              quote.Id,
+                              ConfigurationHelper.NOTIFICATION_TITLE,
+                              Constant.Notification.ACCCEPTED_TEXT);
                 }
-
-                var reqRepo = new ServiceRequestRepository(context);
-                var request = quote.ServiceRequest;
-                request.Status = (int)Constant.ServiceRequestStatus.Closed;
-                reqRepo.Update(request);
-                var buyerName = new UserRepository(context).GetName(request.UserId);
-                MessageModel message = new MessageModel
-                {
-                    MessageText = "Quotation accepted by: " + buyerName,
-                    RequestId = request.Id,
-                    SenderId = request.UserId,
-                    RecieverId = quote.AgentId,
-                    QuotationId = 0
-                };
-                AddMessage(message, context);
-
-                new NotificationRepository(context).Add(
-                          quote.AgentId,
-                          (int)Constant.NotificationType.Accept,
-                          quote.Id,
-                          ConfigurationHelper.NOTIFICATION_TITLE,
-                          Constant.Notification.ACCCEPTED_TEXT);
+                return Ok();
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(QuotationController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         private void AddMessage(MessageModel Model, AppDBContext context)

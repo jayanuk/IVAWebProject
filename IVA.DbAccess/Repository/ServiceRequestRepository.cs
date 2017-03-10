@@ -69,8 +69,8 @@ namespace IVA.DbAccess.Repository
                                     r.Status != (int)Constant.ServiceRequestStatus.Closed &&
                                     r.Status != (int)Constant.ServiceRequestStatus.Expired)
                                     join q in context.RequestQuotations on sr.Id equals q.ServiceRequestId
-                                    where sr.UserId == BuyerId && q.Status == (int)Constant.QuotationStatus.Initial
-                                    select sr;
+                                    where sr.UserId == BuyerId && (q.Status == (int)Constant.QuotationStatus.Initial)
+                                  select sr;
 
             return serviceRequests.ToList<IServiceRequest>();
         }

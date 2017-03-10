@@ -51,7 +51,7 @@ namespace IVA.DbAccess.Repository
             var result = from asr in context.AgentServiceRequests.Where(s => s.AgentId == AgentId &&
                          s.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Closed && s.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Expired)
                          join q in context.RequestQuotations on asr.ServiceRequestId equals q.ServiceRequestId
-                         where q.AgentId == asr.AgentId && q.Status == (int)Constant.QuotationStatus.Initial
+                         where q.AgentId == asr.AgentId && (q.Status == (int)Constant.QuotationStatus.Initial || q.Status == (int)Constant.QuotationStatus.Checked)
                          select asr;
             return result.ToList<IAgentServiceRequest>();
         }

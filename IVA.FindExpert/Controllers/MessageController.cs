@@ -1,4 +1,5 @@
-﻿using IVA.Common;
+﻿using Core.Log;
+using IVA.Common;
 using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
@@ -83,6 +84,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(MessageController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 
@@ -172,6 +174,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(MessageController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 
@@ -274,6 +277,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch(Exception ex)
             {
+                Logger.Log(typeof(MessageController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 
@@ -350,6 +354,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(MessageController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 
@@ -378,6 +383,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch(Exception ex)
             {
+                Logger.Log(typeof(MessageController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 
@@ -462,6 +468,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch(Exception ex)
             {
+                Logger.Log(typeof(MessageController), ex.Message + ex.StackTrace, LogType.ERROR);
                 InternalServerError(ex);
             }
 
@@ -482,6 +489,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch(Exception ex)
             {
+                Logger.Log(typeof(MessageController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError();
             }
 

@@ -1,4 +1,5 @@
-﻿using IVA.DbAccess;
+﻿using Core.Log;
+using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
 using System;
@@ -35,6 +36,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(QuotationTemplateController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 
@@ -64,6 +66,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(QuotationTemplateController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 
@@ -91,6 +94,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch(Exception ex)
             {
+                Logger.Log(typeof(QuotationTemplateController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 
@@ -120,6 +124,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(QuotationTemplateController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError(ex);
             }
 

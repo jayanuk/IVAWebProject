@@ -1,4 +1,5 @@
-﻿using IVA.Common;
+﻿using Core.Log;
+using IVA.Common;
 using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
@@ -18,50 +19,58 @@ namespace IVA.FindExpert.Controllers
         public IHttpActionResult GetByBuyerId(long BuyerId,int Status, int Page)
         {
             var requests = new List<ServiceRequestModel>();
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                var serviceReqRepo = new ServiceRequestRepository(context);
-                var result = serviceReqRepo.GetByBuyerId(BuyerId).ToList();
-                if (Status == (int)Constant.ServiceRequestStatus.Closed)
-                    result = result.Where(r => r.Status == (int)Constant.ServiceRequestStatus.Closed).ToList();
-                else if(Status == (int)Constant.ServiceRequestStatus.Expired)
-                    result = result.Where(r => r.Status == (int)Constant.ServiceRequestStatus.Expired).ToList();               
-
-                requests = result.OrderByDescending(r => r.TimeOccured).
-                    Select(
-                    i => new ServiceRequestModel
-                    {
-                        Id = i.Id,
-                        Code = i.Code,
-                        InsuranceTypeId = i.InsuranceTypeId,
-                        UserId = i.UserId,
-                        CreatedDate = i.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
-                        ClaimType = i.ClaimType,
-                        UsageType = i.UsageType,
-                        RegistrationCategory = i.RegistrationCategory,
-                        VehicleNo = i.VehicleNo,
-                        VehicleValue = i.VehicleValue,
-                        VehicleYear = i.VehicleYear,
-                        IsFinanced = i.IsFinanced,
-                        Status = i.Status,
-                        ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                        QuotationList = GetServiceQuotations(i.Id)
-                    }).ToList();
-
-                requests = requests.Skip((Page - 1) * Constant.Paging.BUYER_REQUESTS_PER_PAGE).
-                   Take(Constant.Paging.BUYER_REQUESTS_PER_PAGE).ToList();
-
-                var followUp = serviceReqRepo.GetFollowUpByBuyerId(BuyerId);
-                foreach(var sr in followUp)
+                using (AppDBContext context = new AppDBContext())
                 {
-                    var req = requests.Where(r => r.Id == sr.Id).FirstOrDefault();
-                    if(req != null)
+                    var serviceReqRepo = new ServiceRequestRepository(context);
+                    var result = serviceReqRepo.GetByBuyerId(BuyerId).ToList();
+                    if (Status == (int)Constant.ServiceRequestStatus.Closed)
+                        result = result.Where(r => r.Status == (int)Constant.ServiceRequestStatus.Closed).ToList();
+                    else if (Status == (int)Constant.ServiceRequestStatus.Expired)
+                        result = result.Where(r => r.Status == (int)Constant.ServiceRequestStatus.Expired).ToList();
+
+                    requests = result.OrderByDescending(r => r.TimeOccured).
+                        Select(
+                        i => new ServiceRequestModel
+                        {
+                            Id = i.Id,
+                            Code = i.Code,
+                            InsuranceTypeId = i.InsuranceTypeId,
+                            UserId = i.UserId,
+                            CreatedDate = i.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
+                            ClaimType = i.ClaimType,
+                            UsageType = i.UsageType,
+                            RegistrationCategory = i.RegistrationCategory,
+                            VehicleNo = i.VehicleNo,
+                            VehicleValue = i.VehicleValue,
+                            VehicleYear = i.VehicleYear,
+                            IsFinanced = i.IsFinanced,
+                            Status = i.Status,
+                            ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
+                            QuotationList = GetServiceQuotations(i.Id)
+                        }).ToList();
+
+                    requests = requests.Skip((Page - 1) * Constant.Paging.BUYER_REQUESTS_PER_PAGE).
+                       Take(Constant.Paging.BUYER_REQUESTS_PER_PAGE).ToList();
+
+                    var followUp = serviceReqRepo.GetFollowUpByBuyerId(BuyerId);
+                    foreach (var sr in followUp)
                     {
-                        req.IsFollowUp = true;
+                        var req = requests.Where(r => r.Id == sr.Id).FirstOrDefault();
+                        if (req != null)
+                        {
+                            req.IsFollowUp = true;
+                        }
                     }
                 }
+                return Json(requests);
             }
-            return Json(requests);
+            catch(Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpGet]
@@ -69,33 +78,41 @@ namespace IVA.FindExpert.Controllers
         public IHttpActionResult GetByAgentId(long AgentId, int Page)
         {
             var requests = new List<ServiceRequestModel>();
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                requests = new ServiceRequestRepository(context).GetByAgentId(AgentId).
-                    OrderByDescending(r => r.TimeOccured).
-                    Select(
-                    i => new ServiceRequestModel
-                    {
-                        Id = i.Id,
-                        Code = i.Code,
-                        InsuranceTypeId = i.InsuranceTypeId,
-                        UserId = i.UserId,
-                        CreatedDate = i.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
-                        ClaimType = i.ClaimType,
-                        UsageType = i.UsageType,
-                        RegistrationCategory = i.RegistrationCategory,
-                        VehicleNo = i.VehicleNo,
-                        VehicleValue = i.VehicleValue,
-                        VehicleYear = i.VehicleYear,
-                        IsFinanced = i.IsFinanced,
-                        Status = i.Status,
-                        ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                        QuotationList = GetServiceQuotations(i.Id)
-                    }).ToList();
+                using (AppDBContext context = new AppDBContext())
+                {
+                    requests = new ServiceRequestRepository(context).GetByAgentId(AgentId).
+                        OrderByDescending(r => r.TimeOccured).
+                        Select(
+                        i => new ServiceRequestModel
+                        {
+                            Id = i.Id,
+                            Code = i.Code,
+                            InsuranceTypeId = i.InsuranceTypeId,
+                            UserId = i.UserId,
+                            CreatedDate = i.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
+                            ClaimType = i.ClaimType,
+                            UsageType = i.UsageType,
+                            RegistrationCategory = i.RegistrationCategory,
+                            VehicleNo = i.VehicleNo,
+                            VehicleValue = i.VehicleValue,
+                            VehicleYear = i.VehicleYear,
+                            IsFinanced = i.IsFinanced,
+                            Status = i.Status,
+                            ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
+                            QuotationList = GetServiceQuotations(i.Id)
+                        }).ToList();
+                }
+                requests = requests.Skip((Page - 1) * Constant.Paging.AGENT_REQUESTS_PER_PAGE).
+                       Take(Constant.Paging.AGENT_REQUESTS_PER_PAGE).ToList();
+                return Json(requests);
             }
-            requests = requests.Skip((Page - 1) * Constant.Paging.AGENT_REQUESTS_PER_PAGE).
-                   Take(Constant.Paging.AGENT_REQUESTS_PER_PAGE).ToList();
-            return Json(requests);
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpGet]
@@ -103,33 +120,41 @@ namespace IVA.FindExpert.Controllers
         public IHttpActionResult GetPendingByAgentId(long AgentId)
         {
             var requests = new List<ServiceRequestModel>();
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                requests = new ServiceRequestRepository(context).GetPendingByAgentId(AgentId).
-                    Where(r => r.Status != (int)Constant.ServiceRequestStatus.Expired ||
-                    r.Status != (int) Constant.ServiceRequestStatus.Closed).
-                    OrderByDescending(r => r.TimeOccured).
-                    Select(
-                    i => new ServiceRequestModel
-                    {
-                        Id = i.Id,
-                        Code = i.Code,
-                        InsuranceTypeId = i.InsuranceTypeId,
-                        UserId = i.UserId,
-                        CreatedDate = i.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
-                        ClaimType = i.ClaimType,
-                        UsageType = i.UsageType,
-                        RegistrationCategory = i.RegistrationCategory,
-                        VehicleNo = i.VehicleNo,
-                        VehicleValue = i.VehicleValue,
-                        VehicleYear = i.VehicleYear,
-                        IsFinanced = i.IsFinanced,
-                        Status = i.Status,
-                        ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                        QuotationList = GetServiceQuotations(i.Id)
-                    }).ToList();
+                using (AppDBContext context = new AppDBContext())
+                {
+                    requests = new ServiceRequestRepository(context).GetPendingByAgentId(AgentId).
+                        Where(r => r.Status != (int)Constant.ServiceRequestStatus.Expired ||
+                        r.Status != (int)Constant.ServiceRequestStatus.Closed).
+                        OrderByDescending(r => r.TimeOccured).
+                        Select(
+                        i => new ServiceRequestModel
+                        {
+                            Id = i.Id,
+                            Code = i.Code,
+                            InsuranceTypeId = i.InsuranceTypeId,
+                            UserId = i.UserId,
+                            CreatedDate = i.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
+                            ClaimType = i.ClaimType,
+                            UsageType = i.UsageType,
+                            RegistrationCategory = i.RegistrationCategory,
+                            VehicleNo = i.VehicleNo,
+                            VehicleValue = i.VehicleValue,
+                            VehicleYear = i.VehicleYear,
+                            IsFinanced = i.IsFinanced,
+                            Status = i.Status,
+                            ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
+                            QuotationList = GetServiceQuotations(i.Id)
+                        }).ToList();
+                }
+                return Json(requests);
             }
-            return Json(requests);
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpGet]
@@ -137,32 +162,40 @@ namespace IVA.FindExpert.Controllers
         public IHttpActionResult GetFollowUpByAgentId(long AgentId)
         {
             var requests = new List<ServiceRequestModel>();
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                requests = new ServiceRequestRepository(context).GetFollowUpByAgentId(AgentId).                   
-                    OrderByDescending(r => r.TimeOccured).
-                    Select(
-                    i => new ServiceRequestModel
-                    {
-                        Id = i.Id,
-                        Code = i.Code,
-                        InsuranceTypeId = i.InsuranceTypeId,
-                        UserId = i.UserId,
-                        CreatedDate = i.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
-                        ClaimType = i.ClaimType,
-                        UsageType = i.UsageType,
-                        RegistrationCategory = i.RegistrationCategory,
-                        VehicleNo = i.VehicleNo,
-                        VehicleValue = i.VehicleValue,
-                        VehicleYear = i.VehicleYear,
-                        IsFinanced = i.IsFinanced,
-                        Status = i.Status,
-                        ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                        TimeToExpire = getTimeToExpire(i.TimeOccured),
-                        QuotationList = GetServiceQuotations(i.Id)
-                    }).ToList();                
+                using (AppDBContext context = new AppDBContext())
+                {
+                    requests = new ServiceRequestRepository(context).GetFollowUpByAgentId(AgentId).
+                        OrderByDescending(r => r.TimeOccured).
+                        Select(
+                        i => new ServiceRequestModel
+                        {
+                            Id = i.Id,
+                            Code = i.Code,
+                            InsuranceTypeId = i.InsuranceTypeId,
+                            UserId = i.UserId,
+                            CreatedDate = i.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
+                            ClaimType = i.ClaimType,
+                            UsageType = i.UsageType,
+                            RegistrationCategory = i.RegistrationCategory,
+                            VehicleNo = i.VehicleNo,
+                            VehicleValue = i.VehicleValue,
+                            VehicleYear = i.VehicleYear,
+                            IsFinanced = i.IsFinanced,
+                            Status = i.Status,
+                            ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
+                            TimeToExpire = getTimeToExpire(i.TimeOccured),
+                            QuotationList = GetServiceQuotations(i.Id)
+                        }).ToList();
+                }
+                return Json(requests);
             }
-            return Json(requests);
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpGet]
@@ -170,11 +203,19 @@ namespace IVA.FindExpert.Controllers
         public IHttpActionResult GetFollowUpByAgentCount(long AgentId)
         {
             var count = 0;
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                count = new ServiceRequestRepository(context).GetFollowUpByAgentId(AgentId).Count();
+                using (AppDBContext context = new AppDBContext())
+                {
+                    count = new ServiceRequestRepository(context).GetFollowUpByAgentId(AgentId).Count();
+                }
+                return Json(count);
             }
-            return Json(count);
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpGet]
@@ -208,56 +249,64 @@ namespace IVA.FindExpert.Controllers
             IUser buyer = null;
             IUserProfile buyerProfile = null;
 
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                request = new ServiceRequestRepository(context).GetById(Id);
-                buyer = new UserRepository(context).GetByUserId(request.UserId);
-                buyerProfile = new UserProfileRepository(context).GetByUserId(request.UserId);
-                if(UserId != null)
-                    new AgentServiceRequestRepository(context).UpdateToPending(
-                        Id, UserId ?? 0);
-            }
-
-            if(request != null)
-            {
-                model = new ServiceRequestModel
+                using (AppDBContext context = new AppDBContext())
                 {
-                    Id = request.Id,
-                    Code = request.Code,
-                    InsuranceTypeId = request.InsuranceTypeId,
-                    UserId = request.UserId,
-                    CreatedDate = request.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
-                    ClaimType = request.ClaimType,
-                    UsageType = request.UsageType,
-                    RegistrationCategory = request.RegistrationCategory,
-                    VehicleNo = request.VehicleNo,
-                    VehicleValue = request.VehicleValue,
-                    VehicleYear = request.VehicleYear,
-                    IsFinanced = request.IsFinanced,
-                    Status = request.Status,
-                    ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                    QuotationList = GetServiceQuotations(request.Id),
-                    Location = request.Location
-                };
+                    request = new ServiceRequestRepository(context).GetById(Id);
+                    buyer = new UserRepository(context).GetByUserId(request.UserId);
+                    buyerProfile = new UserProfileRepository(context).GetByUserId(request.UserId);
+                    if (UserId != null)
+                        new AgentServiceRequestRepository(context).UpdateToPending(
+                            Id, UserId ?? 0);
+                }
 
-                if(buyer != null)
+                if (request != null)
                 {
-                    model.BuyerName = buyer.Name;
-                    model.BuyerMobile = buyer.UserName;
-                    model.IsAllowPhone = false;                  
-
-                    if(buyerProfile != null)
+                    model = new ServiceRequestModel
                     {
-                        model.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
-                        model.BuyerPhone = buyerProfile.Phone;
-                        if(String.IsNullOrEmpty(model.Location))
-                            model.Location = buyerProfile.City;
-                        if (buyerProfile.ContactMethod != (int)Constant.ContactMethod.Message)
-                            model.IsAllowPhone = true;
+                        Id = request.Id,
+                        Code = request.Code,
+                        InsuranceTypeId = request.InsuranceTypeId,
+                        UserId = request.UserId,
+                        CreatedDate = request.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
+                        ClaimType = request.ClaimType,
+                        UsageType = request.UsageType,
+                        RegistrationCategory = request.RegistrationCategory,
+                        VehicleNo = request.VehicleNo,
+                        VehicleValue = request.VehicleValue,
+                        VehicleYear = request.VehicleYear,
+                        IsFinanced = request.IsFinanced,
+                        Status = request.Status,
+                        ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
+                        QuotationList = GetServiceQuotations(request.Id),
+                        Location = request.Location
+                    };
+
+                    if (buyer != null)
+                    {
+                        model.BuyerName = buyer.Name;
+                        model.BuyerMobile = buyer.UserName;
+                        model.IsAllowPhone = false;
+
+                        if (buyerProfile != null)
+                        {
+                            model.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
+                            model.BuyerPhone = buyerProfile.Phone;
+                            if (String.IsNullOrEmpty(model.Location))
+                                model.Location = buyerProfile.City;
+                            if (buyerProfile.ContactMethod != (int)Constant.ContactMethod.Message)
+                                model.IsAllowPhone = true;
+                        }
                     }
                 }
+                return Json(model);
             }
-            return Json(model);
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpGet]
@@ -269,53 +318,61 @@ namespace IVA.FindExpert.Controllers
             IUser buyer = null;
             IUserProfile buyerProfile = null;
 
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                request = new ServiceRequestRepository(context).GetById(Id);
-                buyer = new UserRepository(context).GetByUserId(request.UserId);
-                buyerProfile = new UserProfileRepository(context).GetByUserId(request.UserId);               
-            }
-
-            if (request != null)
-            {
-                model = new ServiceRequestModel
+                using (AppDBContext context = new AppDBContext())
                 {
-                    Id = request.Id,
-                    Code = request.Code,
-                    InsuranceTypeId = request.InsuranceTypeId,
-                    UserId = request.UserId,
-                    CreatedDate = request.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
-                    ClaimType = request.ClaimType,
-                    UsageType = request.UsageType,
-                    RegistrationCategory = request.RegistrationCategory,
-                    VehicleNo = request.VehicleNo,
-                    VehicleValue = request.VehicleValue,
-                    VehicleYear = request.VehicleYear,
-                    IsFinanced = request.IsFinanced,
-                    Status = request.Status,
-                    ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                    QuotationList = GetServiceQuotations(request.Id),
-                    Location = request.Location
-                };
+                    request = new ServiceRequestRepository(context).GetById(Id);
+                    buyer = new UserRepository(context).GetByUserId(request.UserId);
+                    buyerProfile = new UserProfileRepository(context).GetByUserId(request.UserId);
+                }
 
-                if (buyer != null)
+                if (request != null)
                 {
-                    model.BuyerName = buyer.Name;
-                    model.BuyerMobile = buyer.UserName;
-                    model.IsAllowPhone = false;
-
-                    if (buyerProfile != null)
+                    model = new ServiceRequestModel
                     {
-                        model.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
-                        model.BuyerPhone = buyerProfile.Phone;
-                        if (String.IsNullOrEmpty(model.Location))
-                            model.Location = buyerProfile.City;
-                        if (buyerProfile.ContactMethod != (int)Constant.ContactMethod.Message)
-                            model.IsAllowPhone = true;
+                        Id = request.Id,
+                        Code = request.Code,
+                        InsuranceTypeId = request.InsuranceTypeId,
+                        UserId = request.UserId,
+                        CreatedDate = request.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
+                        ClaimType = request.ClaimType,
+                        UsageType = request.UsageType,
+                        RegistrationCategory = request.RegistrationCategory,
+                        VehicleNo = request.VehicleNo,
+                        VehicleValue = request.VehicleValue,
+                        VehicleYear = request.VehicleYear,
+                        IsFinanced = request.IsFinanced,
+                        Status = request.Status,
+                        ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
+                        QuotationList = GetServiceQuotations(request.Id),
+                        Location = request.Location
+                    };
+
+                    if (buyer != null)
+                    {
+                        model.BuyerName = buyer.Name;
+                        model.BuyerMobile = buyer.UserName;
+                        model.IsAllowPhone = false;
+
+                        if (buyerProfile != null)
+                        {
+                            model.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
+                            model.BuyerPhone = buyerProfile.Phone;
+                            if (String.IsNullOrEmpty(model.Location))
+                                model.Location = buyerProfile.City;
+                            if (buyerProfile.ContactMethod != (int)Constant.ContactMethod.Message)
+                                model.IsAllowPhone = true;
+                        }
                     }
                 }
+                return Json(model);
             }
-            return Json(model);
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpPost]
@@ -338,25 +395,33 @@ namespace IVA.FindExpert.Controllers
             SR.Location = Model.Location;
             //SR.Images = Model.Images;
 
-            using (AppDBContext context = new AppDBContext())
+            try
             {
-                var repo = new ServiceRequestRepository(context);
-                if (SR.Id == 0)
+                using (AppDBContext context = new AppDBContext())
                 {
-                    SR.Id = repo.Add(SR);
-                    AssignRequestToAgents(SR.Id);
-                }                    
-                else
-                    repo.Update(SR);
+                    var repo = new ServiceRequestRepository(context);
+                    if (SR.Id == 0)
+                    {
+                        SR.Id = repo.Add(SR);
+                        AssignRequestToAgents(SR.Id);
+                    }
+                    else
+                        repo.Update(SR);
 
-                if (SR.Images != null)
-                {
-                    var imageRepo = new VehicleImageRepository(context);
-                    imageRepo.Update(SR.Id, SR.Images);
-                }                
+                    if (SR.Images != null)
+                    {
+                        var imageRepo = new VehicleImageRepository(context);
+                        imageRepo.Update(SR.Id, SR.Images);
+                    }
+                }
+
+                return Json(SR);
             }
-
-            return Json(SR);
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
         }
 
         [HttpGet]
@@ -373,6 +438,7 @@ namespace IVA.FindExpert.Controllers
             }
             catch (Exception ex)
             {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
                 return InternalServerError();
             }
 

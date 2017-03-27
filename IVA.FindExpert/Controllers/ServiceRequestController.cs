@@ -100,6 +100,7 @@ namespace IVA.FindExpert.Controllers
                             VehicleYear = i.VehicleYear,
                             IsFinanced = i.IsFinanced,
                             Status = i.Status,
+                            Location = i.Location == null ? String.Empty : i.Location,
                             ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                             QuotationList = GetServiceQuotations(i.Id)
                         }).ToList();
@@ -144,6 +145,7 @@ namespace IVA.FindExpert.Controllers
                             VehicleYear = i.VehicleYear,
                             IsFinanced = i.IsFinanced,
                             Status = i.Status,
+                            Location = i.Location == null ? String.Empty : i.Location,
                             ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                             QuotationList = GetServiceQuotations(i.Id)
                         }).ToList();
@@ -184,6 +186,7 @@ namespace IVA.FindExpert.Controllers
                             VehicleYear = i.VehicleYear,
                             IsFinanced = i.IsFinanced,
                             Status = i.Status,
+                            Location = i.Location == null ? String.Empty : i.Location,
                             ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                             TimeToExpire = getTimeToExpire(i.TimeOccured),
                             QuotationList = GetServiceQuotations(i.Id)
@@ -278,9 +281,9 @@ namespace IVA.FindExpert.Controllers
                         VehicleYear = request.VehicleYear,
                         IsFinanced = request.IsFinanced,
                         Status = request.Status,
+                        Location = request.Location == null ? String.Empty : request.Location,
                         ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                        QuotationList = GetServiceQuotations(request.Id),
-                        Location = request.Location
+                        QuotationList = GetServiceQuotations(request.Id)                        
                     };
 
                     if (buyer != null)
@@ -344,9 +347,9 @@ namespace IVA.FindExpert.Controllers
                         VehicleYear = request.VehicleYear,
                         IsFinanced = request.IsFinanced,
                         Status = request.Status,
+                        Location = request.Location == null ? String.Empty : request.Location,
                         ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
-                        QuotationList = GetServiceQuotations(request.Id),
-                        Location = request.Location
+                        QuotationList = GetServiceQuotations(request.Id)
                     };
 
                     if (buyer != null)
@@ -504,7 +507,7 @@ namespace IVA.FindExpert.Controllers
                             foreach (var agent in agents)
                             {
                                 //get open requests for each agent
-                                var agentRequests = agentServiceRepo.GetByAgentId(agent.Id)?.Where(
+                                var agentRequests = agentServiceRepo.GetByAgentIdForAssign(agent.Id)?.Where(
                                     r => (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Closed ||
                                         (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Expired);
                                 if (agentRequests != null)
@@ -529,7 +532,7 @@ namespace IVA.FindExpert.Controllers
                         };
 
                         agentServiceRepo.Add(asr);
-                        
+
                         new NotificationRepository(context).Add(
                             asr.AgentId,
                             (int)Constant.NotificationType.Request,

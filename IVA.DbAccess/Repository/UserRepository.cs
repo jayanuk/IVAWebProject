@@ -26,13 +26,13 @@ namespace IVA.DbAccess.Repository
                 throw e;
             }
             
-        }
+        }       
 
-        public IUser GetByUserNameAndPassword(string UserName, string Password)
+        public IUser GetByUserNameAndPasswordSeller(string UserName, string Password)
         {
             UserName = UserName.Trim();
-            return context.Users.Where(u => UserName.Equals(u.UserName) && 
-                                        u.Password.Equals(Password) && (u.IsActive ?? false)).FirstOrDefault();
+            return context.Users.Where(u => UserName.Equals(u.UserName) &&
+                                        u.Password.Equals(Password) && (u.IsActive ?? false) && u.CompanyId > 0).FirstOrDefault();
         }
 
         public IUser GetByLoginId(long LoginId)

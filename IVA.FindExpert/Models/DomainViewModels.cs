@@ -107,6 +107,7 @@ public class RequestQuotationViewModel
     public string CreatedTime { get; set; }
     public string ModifiedTime { get; set; }
     public long ThreadId { get; set; }
+    public bool IsExpired { get; set; }
 
     public string ServiceRequestCode { get; set; }
     public int ClaimType { get; set; }

@@ -27,8 +27,20 @@ namespace IVA.DbAccess.Repository
         {
             var result = context.AgentServiceRequests.Where(
                 i => i.AgentId == AgentId &&
-                (i.Status == (int)Constant.ServiceRequestStatus.SellerResponded || i.Status == (int)Constant.ServiceRequestStatus.Closed) &&
+                (i.Status == (int)Constant.ServiceRequestStatus.SellerResponded || i.Status == (int)Constant.ServiceRequestStatus.Closed) &&                
                 i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Expired).ToList();
+            return result.Distinct<AgentServiceRequest>(new AgentServiceRequestComparer()).ToList();
+        }
+
+        public List<AgentServiceRequest> GetByAgentIdForAssign(long AgentId)
+        {
+            List<int> quoteOpenStatus = new List<int> { (int)Constant.QuotationStatus.Initial, (int)Constant.QuotationStatus.Checked };
+            var result = context.AgentServiceRequests.Where(
+                i => i.AgentId == AgentId &&                
+                (i.Status == (int)Constant.ServiceRequestStatus.Initial || i.Status == (int)Constant.ServiceRequestStatus.PendingResponse ||i.Status == (int)Constant.ServiceRequestStatus.SellerResponded) &&
+                i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Closed &&
+                i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Expired && 
+                !i.ServiceRequest.QuotationList.Any(q => q.AgentId == AgentId && quoteOpenStatus.Any(s => s == q.Status) && !(q.IsExpired ?? false))).ToList();
             return result.Distinct<AgentServiceRequest>(new AgentServiceRequestComparer()).ToList();
         }
 

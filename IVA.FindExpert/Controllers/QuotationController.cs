@@ -45,7 +45,8 @@ namespace IVA.FindExpert.Controllers
                             ServiceRequestCode = quote.ServiceRequest.Code,
                             ClaimType = quote.ServiceRequest.ClaimType,
                             VehicleNo = quote.ServiceRequest.VehicleNo,
-                            VehicleValue = quote.ServiceRequest.VehicleValue
+                            VehicleValue = quote.ServiceRequest.VehicleValue,
+                            IsExpired = quote.IsExpired ?? false
                         };
 
                         if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||
@@ -97,7 +98,8 @@ namespace IVA.FindExpert.Controllers
                             ServiceRequestCode = quote.ServiceRequest.Code,
                             ClaimType = quote.ServiceRequest.ClaimType,
                             VehicleNo = quote.ServiceRequest.VehicleNo,
-                            VehicleValue = quote.ServiceRequest.VehicleValue
+                            VehicleValue = quote.ServiceRequest.VehicleValue,
+                            IsExpired = quote.IsExpired ?? false
                         };
 
                         if (quote.ServiceRequest.Status == (int)Constant.ServiceRequestStatus.Closed ||

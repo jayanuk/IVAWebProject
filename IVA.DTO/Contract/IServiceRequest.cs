@@ -23,6 +23,7 @@ namespace IVA.DTO.Contract
         bool IsFinanced { get; set; }
         int Status { get; set; }
         bool? BuyerResponded { get; set; }
+        string Location { get; set; }
 
         List<VehicleImage> Images { get; set; }
         List<RequestQuotation> QuotationList { get; set; }

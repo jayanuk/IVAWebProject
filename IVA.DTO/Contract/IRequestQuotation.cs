@@ -18,5 +18,6 @@ namespace IVA.DTO.Contract
         string QuotationText { get; set; }
         DateTime? CreatedTime { get; set; }
         DateTime? ModifiedTime { get; set; }
+        bool? IsExpired { get; set; }
     }
 }

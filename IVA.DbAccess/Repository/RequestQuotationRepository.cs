@@ -43,7 +43,7 @@ namespace IVA.DbAccess.Repository
         public RequestQuotation GetByRequestAndAgent(long RequestId, long AgentId)
         {
             return context.RequestQuotations.Where(
-                r => r.ServiceRequestId == RequestId && r.AgentId == AgentId).FirstOrDefault();
+                r => r.ServiceRequestId == RequestId && r.AgentId == AgentId && !(r.IsExpired ?? false)).FirstOrDefault();
         }
 
         public long Add(RequestQuotation Quotation)
@@ -72,7 +72,7 @@ namespace IVA.DbAccess.Repository
         public void UpdateToChecked(long QuotationId)
         {
             var existing = context.RequestQuotations.Where(q => q.Id == QuotationId).FirstOrDefault();
-            if (existing != null)
+            if (existing != null && existing.Status == (int)Constant.QuotationStatus.Initial)
             {
                 existing.ModifiedTime = DateTime.Now.ToUniversalTime();
                 existing.Status = (int)Constant.QuotationStatus.Checked;

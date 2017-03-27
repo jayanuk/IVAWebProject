@@ -29,10 +29,56 @@ namespace IVA.FindExpert.Controllers.WebAPI
             //ServiceRequestController.AssignRequestToAgents(5);
             //NotificationHelper.GCMNotification("ejV8j1Ife04:APA91bGctCxqnIX3xJmsWrOqnO8b_H8h8L9LFpfXQ_-Eigk-SYQko2h5E6sUge0AHSzPraQzBdQIy7UyH_I90YGB0hnB2E_6h1au_bp0OIrd6fGytuXsPWTnZCjbFDc3-pio7BkpNGbn", "Test Message");
             long id = 0;
+            long ServiceRequestId = 20144;
+
             using (AppDBContext context = new AppDBContext())
             {
-                id = new AgentServiceRequestRepository(context).GetAgentIdIfServicedRecently("wp ke6278", 1);
-                Logger.Log(typeof(DefaultController), id.ToString(), LogType.INFO);
+                var companies = new CompanyRepository(context).GetAll();
+                var request = new ServiceRequestRepository(context).GetById(ServiceRequestId);
+                var agentServiceRepo = new AgentServiceRequestRepository(context);
+
+                foreach (var company in companies)
+                {
+                    //Check vehicle number is recently serviced
+                    var agentId = agentServiceRepo.GetAgentIdIfServicedRecently(request.VehicleNo, company.Id);
+                    if (agentId == 0)
+                    {
+                        //get agents for each company
+                        var agents = new UserRepository(context).GetAgentsByCompany(company.Id);
+
+                        if (agents == null)
+                            continue;
+
+                        Dictionary<long, int> counts = new Dictionary<long, int>();
+
+                        foreach (var agent in agents)
+                        {
+                            //get open requests for each agent
+                            var agentRequests = agentServiceRepo.GetByAgentIdForAssign(agent.Id);
+                                //?.Where(
+                                //r => (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Closed ||
+                                //    (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Expired);
+                            if (agentRequests != null)
+                                counts.Add(agent.Id, agentRequests.Count());
+                            else
+                                counts.Add(agent.Id, 0);
+                        }
+
+                        //find agent with min no of requests
+                        //order by id asc and get top 1 agent
+                        var item = counts.OrderBy(i => i.Value).ThenBy(i => i.Key).First();
+                        agentId = item.Key;
+                    }
+
+                    //assign the request to agent
+                    AgentServiceRequest asr = new AgentServiceRequest
+                    {
+                        AgentId = agentId,
+                        ServiceRequestId = ServiceRequestId,
+                        Status = (int)Constant.ServiceRequestStatus.Initial,
+                        CreatedTime = DateTime.Now.ToUniversalTime()
+                    };
+                }
             }
             return Ok(id);
         }

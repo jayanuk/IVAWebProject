@@ -22,6 +22,7 @@ namespace IVA.DTO
         public string QuotationText { get; set; }
         public DateTime? CreatedTime { get; set; }
         public DateTime? ModifiedTime { get; set; }
+        public bool? IsExpired { get; set; }
 
         public virtual ServiceRequest ServiceRequest { get; set; }
         public virtual QuotationTemplate QuotationTemplate { get; set; }        

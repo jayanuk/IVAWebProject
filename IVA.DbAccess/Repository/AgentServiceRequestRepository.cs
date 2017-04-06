@@ -39,8 +39,9 @@ namespace IVA.DbAccess.Repository
                 i => i.AgentId == AgentId &&                
                 (i.Status == (int)Constant.ServiceRequestStatus.Initial || i.Status == (int)Constant.ServiceRequestStatus.PendingResponse ||i.Status == (int)Constant.ServiceRequestStatus.SellerResponded) &&
                 i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Closed &&
-                i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Expired && 
-                !i.ServiceRequest.QuotationList.Any(q => q.AgentId == AgentId && quoteOpenStatus.Any(s => s == q.Status) && !(q.IsExpired ?? false))).ToList();
+                i.ServiceRequest.Status != (int)Constant.ServiceRequestStatus.Expired &&
+                //!i.ServiceRequest.QuotationList.Any(q => q.AgentId == AgentId && quoteOpenStatus.Any(s => s == q.Status) && !(q.IsExpired ?? false))).ToList();
+                !i.ServiceRequest.QuotationList.Any(q => q.AgentId == AgentId && !(q.IsExpired ?? false))).ToList();
             return result.Distinct<AgentServiceRequest>(new AgentServiceRequestComparer()).ToList();
         }
 

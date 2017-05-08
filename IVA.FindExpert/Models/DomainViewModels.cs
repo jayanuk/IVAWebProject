@@ -212,3 +212,8 @@ public class UserDeviceModel
     public string DeviceToken { get; set; }
     public string DeviceId { get; set; }
 }
+
+public class NotificationListViewModel
+{
+    public List<long> Ids { get; set; }
+}

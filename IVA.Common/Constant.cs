@@ -14,6 +14,7 @@ namespace IVA.Common
         public struct DateFormatType
         {
             public const string YYYYMMDD = "yyyy-MM-dd";
+            public const string DateWithTime = "yyyy-MM-dd hh:mm tt";
         }
 
         public struct UserType
@@ -114,6 +115,7 @@ namespace IVA.Common
             public const int BUYER_REQUESTS_PER_PAGE = 20;
             public const int AGENT_REQUESTS_PER_PAGE = 20;
             public const int MESSAGE_THREADS_PER_PAGE = 20;
+            public const int NOTIFICATIONS_PER_PAGE = 20;
         }
 
     }

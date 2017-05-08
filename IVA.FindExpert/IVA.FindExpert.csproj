@@ -316,6 +316,9 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Images\CompanyLogo\1.jpg" />
+    <Content Include="Images\CompanyLogo\4.jpg" />
+    <Content Include="Images\CompanyLogo\NoLogo.jpg" />
     <Content Include="Images\slide-1.png" />
     <Content Include="Images\slide-2.png" />
     <Content Include="Logs\log.txt" />

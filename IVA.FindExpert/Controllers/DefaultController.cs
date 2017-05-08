@@ -17,6 +17,11 @@ using IVA.FindExpert.Models;
 using Microsoft.AspNet.Identity;
 using IVA.FindExpert.Helpers;
 using Core.Log;
+using System.Web.Hosting;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Net.Http.Headers;
 
 namespace IVA.FindExpert.Controllers.WebAPI
 {
@@ -29,7 +34,7 @@ namespace IVA.FindExpert.Controllers.WebAPI
             //ServiceRequestController.AssignRequestToAgents(5);
             //NotificationHelper.GCMNotification("ejV8j1Ife04:APA91bGctCxqnIX3xJmsWrOqnO8b_H8h8L9LFpfXQ_-Eigk-SYQko2h5E6sUge0AHSzPraQzBdQIy7UyH_I90YGB0hnB2E_6h1au_bp0OIrd6fGytuXsPWTnZCjbFDc3-pio7BkpNGbn", "Test Message");
             long id = 0;
-            long ServiceRequestId = 20144;
+            long ServiceRequestId = 40219;
 
             using (AppDBContext context = new AppDBContext())
             {
@@ -41,6 +46,8 @@ namespace IVA.FindExpert.Controllers.WebAPI
                 {
                     //Check vehicle number is recently serviced
                     var agentId = agentServiceRepo.GetAgentIdIfServicedRecently(request.VehicleNo, company.Id);
+                    var lastRequestAgent = agentServiceRepo.GetLastOpenServiceAgentIdByCompany(company.Id);
+
                     if (agentId == 0)
                     {
                         //get agents for each company
@@ -54,14 +61,17 @@ namespace IVA.FindExpert.Controllers.WebAPI
                         foreach (var agent in agents)
                         {
                             //get open requests for each agent
-                            var agentRequests = agentServiceRepo.GetByAgentIdForAssign(agent.Id);
-                                //?.Where(
-                                //r => (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Closed ||
-                                //    (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Expired);
+                            var agentRequests = agentServiceRepo.GetByAgentIdForAssign(agent.Id)
+                                ?.Where(
+                                r => (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Closed ||
+                                    (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Expired);
+                            var weight = 0;
+                            if (agent.Id == lastRequestAgent)
+                                weight = 100;
                             if (agentRequests != null)
-                                counts.Add(agent.Id, agentRequests.Count());
+                                counts.Add(agent.Id, agentRequests.Count() + weight);
                             else
-                                counts.Add(agent.Id, 0);
+                                counts.Add(agent.Id, 0 + weight);
                         }
 
                         //find agent with min no of requests
@@ -139,5 +149,41 @@ namespace IVA.FindExpert.Controllers.WebAPI
            
             return Ok(list);
         }
+
+        [HttpGet]
+        public HttpResponseMessage GetCompanyLogo(int id)
+        {
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                string logoPath = string.Format("~/Images/CompanyLogo/{0}.jpg", id);
+                String filePath = HostingEnvironment.MapPath(logoPath);
+
+                if (!File.Exists(filePath)) //No logo found
+                {
+                    logoPath = "~/Images/CompanyLogo/NoLogo.jpg";
+                    filePath = HostingEnvironment.MapPath(logoPath);
+                }
+
+                //FileStream fileStream = new FileStream(filePath, FileMode.Open);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
+                {
+                    Image image = Image.FromStream(fileStream);
+                    MemoryStream memoryStream = new MemoryStream();
+                    image.Save(memoryStream, ImageFormat.Jpeg);
+                    result.Content = new ByteArrayContent(memoryStream.ToArray());
+                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+                    fileStream.Close();
+                }
+                    
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(DefaultController), ex.Message, LogType.ERROR);
+            }
+
+            return result;
+        }
+
     }
 }

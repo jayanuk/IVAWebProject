@@ -117,5 +117,15 @@ namespace IVA.DbAccess.Repository
 
         }
 
+        public long GetLastOpenServiceAgentIdByCompany(int CompanyId)
+        {            
+            var result = (from asr in context.AgentServiceRequests
+                         join user in context.Users on asr.AgentId equals user.Id
+                         where user.CompanyId == CompanyId
+                         orderby asr.CreatedTime descending
+                         select asr.AgentId).FirstOrDefault();
+            return result;
+        }
+
     }
 }

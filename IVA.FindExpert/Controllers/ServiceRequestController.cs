@@ -160,7 +160,7 @@ namespace IVA.FindExpert.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public IHttpActionResult GetFollowUpByAgentId(long AgentId)
         {
             var requests = new List<ServiceRequestModel>();
@@ -222,7 +222,7 @@ namespace IVA.FindExpert.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public IHttpActionResult GetFollowUpByBuyerCount(long BuyerId)
         {
             var count = 0;
@@ -236,7 +236,7 @@ namespace IVA.FindExpert.Controllers
         private string getTimeToExpire(DateTime CreatedDate)
         {
             var expDate = CreatedDate.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST);
-            var timeToexpire = DateTime.Now.ToUniversalTime().GetAdjustedTime().Subtract(expDate);
+            var timeToexpire = expDate.Subtract(DateTime.Now.ToUniversalTime().GetAdjustedTime());
             if (timeToexpire.Hours > 0)
                 return timeToexpire.Hours.ToString() + "h " + timeToexpire.Minutes + "m";
             else
@@ -290,7 +290,7 @@ namespace IVA.FindExpert.Controllers
                     {
                         model.BuyerName = buyer.Name;
                         model.BuyerMobile = buyer.UserName;
-                        model.IsAllowPhone = false;
+                        model.IsAllowPhone = true;
 
                         if (buyerProfile != null)
                         {
@@ -298,8 +298,8 @@ namespace IVA.FindExpert.Controllers
                             model.BuyerPhone = buyerProfile.Phone;
                             if (String.IsNullOrEmpty(model.Location))
                                 model.Location = buyerProfile.City;
-                            if (buyerProfile.ContactMethod != (int)Constant.ContactMethod.Message)
-                                model.IsAllowPhone = true;
+                            if (buyerProfile.ContactMethod == (int)Constant.ContactMethod.Message)
+                                model.IsAllowPhone = false;
                         }
                     }
                 }
@@ -494,7 +494,9 @@ namespace IVA.FindExpert.Controllers
                     {
                         //Check vehicle number is recently serviced
                         var agentId = agentServiceRepo.GetAgentIdIfServicedRecently(request.VehicleNo, company.Id);
-                        if(agentId == 0)
+                        var lastRequestAgent = agentServiceRepo.GetLastOpenServiceAgentIdByCompany(company.Id);
+
+                        if (agentId == 0)
                         {
                             //get agents for each company
                             var agents = new UserRepository(context).GetAgentsByCompany(company.Id);
@@ -510,10 +512,14 @@ namespace IVA.FindExpert.Controllers
                                 var agentRequests = agentServiceRepo.GetByAgentIdForAssign(agent.Id)?.Where(
                                     r => (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Closed ||
                                         (r.Status ?? 0) != (int)Constant.ServiceRequestStatus.Expired);
+                                var weight = 0;
+                                if (agent.Id == lastRequestAgent)
+                                    weight = 100;
+
                                 if (agentRequests != null)
-                                    counts.Add(agent.Id, agentRequests.Count());
+                                    counts.Add(agent.Id, agentRequests.Count() + weight);
                                 else
-                                    counts.Add(agent.Id, 0);
+                                    counts.Add(agent.Id, 0 + weight);
                             }
 
                             //find agent with min no of requests

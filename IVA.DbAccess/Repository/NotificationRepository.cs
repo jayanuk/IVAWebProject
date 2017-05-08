@@ -75,7 +75,7 @@ namespace IVA.DbAccess.Repository
         public List<Notification> GetByUserForList(int Page, long UserId)
         {
             var notifications = context.Notifications.Where(
-                n => n.RecieverId == UserId && !(n.IsDeleted ?? false)
+                n => n.RecieverId == UserId && !(n.IsDeleted ?? false) && n.Time > DateTime.Now.AddDays(-3).ToUniversalTime()
                 ).OrderByDescending(n => n.Time).Skip((Page - 1) * Constant.Paging.NOTIFICATIONS_PER_PAGE).
                        Take(Constant.Paging.NOTIFICATIONS_PER_PAGE).ToList();
             return notifications;

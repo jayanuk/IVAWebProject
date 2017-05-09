@@ -74,7 +74,7 @@ namespace IVA.DbAccess.Repository
 
         public List<Notification> GetByUserForList(int Page, long UserId)
         {
-            var cutOffDate = DateTime.UtcNow.AddDays(-3);
+            var cutOffDate = DateTime.UtcNow.AddDays(-5);
             var notifications = context.Notifications.Where(
                 n => n.RecieverId == UserId && !(n.IsDeleted ?? false) && n.Time > cutOffDate
                 ).OrderByDescending(n => n.Time).Skip((Page - 1) * Constant.Paging.NOTIFICATIONS_PER_PAGE).

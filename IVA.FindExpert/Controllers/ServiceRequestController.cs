@@ -471,7 +471,8 @@ namespace IVA.FindExpert.Controllers
                         QuotationTemplateName = q.QuotationTemplate.Name,
                         Status = q.Status ?? 0,
                         CompanyId = q.Agent.CompanyId ?? 0,
-                        CompanyName = q.Agent.Company?.Name
+                        CompanyName = q.Agent.Company?.Name,
+                        QuotationText = q.QuotationText
 
                     }).ToList();
                 }

@@ -472,7 +472,7 @@ namespace IVA.FindExpert.Controllers
                         Status = q.Status ?? 0,
                         CompanyId = q.Agent.CompanyId ?? 0,
                         CompanyName = q.Agent.Company?.Name,
-                        QuotationText = q.QuotationText
+                        QuotationText = q.QuotationTemplate.Body + " \n\n" + q.QuotationText
 
                     }).ToList();
                 }

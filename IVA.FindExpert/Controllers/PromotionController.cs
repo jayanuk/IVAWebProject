@@ -2,6 +2,7 @@
 using IVA.Common;
 using IVA.DbAccess;
 using IVA.DbAccess.Repository;
+using IVA.FindExpert.Helpers.ActionFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace IVA.FindExpert.Controllers
     {
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetPromotions(int Type)
         {
             List<PromotionModel> promotions = null;
@@ -46,6 +48,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetPromotionById(int Id)
         {
             PromotionModel promotion = null;
@@ -77,6 +80,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetLatestPromotion(int Type)
         {
             PromotionModel promotion = null;

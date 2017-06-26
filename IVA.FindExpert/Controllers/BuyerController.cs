@@ -87,6 +87,7 @@ namespace IVA.FindExpert.Controllers
                     if (codeMatch)
                     {
                         var userRepo = new UserRepository(context);
+                        var loginHistoryRepo = new LoginHistoryRepository(context);
                         var curUser = userRepo.GetByUserName(user.UserName);
                         user.PasswordValidated = true;
 
@@ -104,7 +105,7 @@ namespace IVA.FindExpert.Controllers
                             //user.CreatedDate = curUser.CreatedDate;
                             user.ModifiedDate = DateTime.Now.ToUniversalTime();
                             user.IsActive = true;
-                            userRepo.Update(user);
+                            userRepo.Update(user);                            
                         }
                         else
                         {
@@ -125,7 +126,7 @@ namespace IVA.FindExpert.Controllers
                                 return InternalServerError();
                             }
                         }
-
+                        loginHistoryRepo.Add(user.Id, AppRequest.ClientType);
                         profile = new UserProfileRepository(context).GetByUserId(user.Id);
                     }
                 }

@@ -2,6 +2,7 @@
 using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
+using IVA.FindExpert.Helpers.ActionFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetTemplateById(long Id)
         {
             QuotationTemplateModel model = null;
@@ -45,6 +47,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetTemplateByAgent(long AgentId)
         {
             List<QuotationTemplateModel> list = null;
@@ -75,6 +78,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult Update(QuotationTemplateModel Model)
         {
             try
@@ -103,6 +107,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult Add(QuotationTemplateModel Model)
         {
             try

@@ -20,9 +20,18 @@ namespace IVA.DbAccess.Repository
             return context.ServiceRequests.Where(r => r.Id == Id).FirstOrDefault();
         }
 
-        public List<IServiceRequest> GetByBuyerId(long Id)
+        public List<IServiceRequest> GetByBuyerId(long Id, int Status, int Page)
         {
-            return context.ServiceRequests.Where(r => r.UserId == Id).ToList<IServiceRequest>();
+            if(Status > 0)
+                return context.ServiceRequests.Where(r => r.UserId == Id && r.Status == Status).
+                    OrderByDescending(r => r.TimeOccured).
+                    Skip((Page - 1) * Constant.Paging.BUYER_REQUESTS_PER_PAGE).
+                       Take(Constant.Paging.BUYER_REQUESTS_PER_PAGE).ToList<IServiceRequest>();
+            else
+                return context.ServiceRequests.Where(r => r.UserId == Id).
+                    OrderByDescending(r => r.TimeOccured).
+                    Skip((Page - 1) * Constant.Paging.BUYER_REQUESTS_PER_PAGE).
+                       Take(Constant.Paging.BUYER_REQUESTS_PER_PAGE).ToList<IServiceRequest>();
         }
 
         public List<IServiceRequest> GetByAgentId(long AgentId)
@@ -101,6 +110,8 @@ namespace IVA.DbAccess.Repository
             sr.TimeOccured = DateTime.Now.ToUniversalTime();
             sr.IsFinanced = ServiceRequestInstance.IsFinanced;
             sr.Location = ServiceRequestInstance.Location;
+            sr.ClientType = ServiceRequestInstance.ClientType;
+
             context.ServiceRequests.Add(sr);
             context.SaveChanges();
             UpdateSRCode(sr.Id);

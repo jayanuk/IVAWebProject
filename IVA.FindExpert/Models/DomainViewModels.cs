@@ -14,6 +14,7 @@ public class LoginRequest
     public string Name { get; set; }
     public string Password { get; set; }
     public int UserType { get; set; }
+    public int ClientType { get; set; }
 }
 
 public class UserModel
@@ -84,6 +85,7 @@ public class ServiceRequestModel
 
     public string TimeToExpire { get; set; }
     public bool IsFollowUp { get; set; }
+    public int? ClientType { get; set; }
 
     public List<RequestQuotationViewModel> QuotationList { get; set; }
     public List<VehicleImage> Images { get; set; }

@@ -5,6 +5,7 @@ using IVA.DbAccess.Repository;
 using IVA.DTO;
 using IVA.DTO.Contract;
 using IVA.FindExpert.Helpers;
+using IVA.FindExpert.Helpers.ActionFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace IVA.FindExpert.Controllers
     {
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetByBuyerId(long BuyerId,int Status, int Page)
         {
             var requests = new List<ServiceRequestModel>();
@@ -24,15 +26,11 @@ namespace IVA.FindExpert.Controllers
                 using (AppDBContext context = new AppDBContext())
                 {
                     var serviceReqRepo = new ServiceRequestRepository(context);
-                    var result = serviceReqRepo.GetByBuyerId(BuyerId).ToList();
-                    if (Status == (int)Constant.ServiceRequestStatus.Closed)
-                        result = result.Where(r => r.Status == (int)Constant.ServiceRequestStatus.Closed).ToList();
-                    else if (Status == (int)Constant.ServiceRequestStatus.Expired)
-                        result = result.Where(r => r.Status == (int)Constant.ServiceRequestStatus.Expired).ToList();
+                    if (!(Status == (int)Constant.ServiceRequestStatus.Closed || Status == (int)Constant.ServiceRequestStatus.Expired))
+                        Status = 0;
+                    var result = serviceReqRepo.GetByBuyerId(BuyerId, Status, Page).ToList();                  
 
-                    requests = result.OrderByDescending(r => r.TimeOccured).
-                        Select(
-                        i => new ServiceRequestModel
+                    requests = result.Select(i => new ServiceRequestModel
                         {
                             Id = i.Id,
                             Code = i.Code,
@@ -50,9 +48,6 @@ namespace IVA.FindExpert.Controllers
                             ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                             QuotationList = GetServiceQuotations(i.Id)
                         }).ToList();
-
-                    requests = requests.Skip((Page - 1) * Constant.Paging.BUYER_REQUESTS_PER_PAGE).
-                       Take(Constant.Paging.BUYER_REQUESTS_PER_PAGE).ToList();
 
                     var followUp = serviceReqRepo.GetFollowUpByBuyerId(BuyerId);
                     foreach (var sr in followUp)
@@ -75,6 +70,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetByAgentId(long AgentId, int Page)
         {
             var requests = new List<ServiceRequestModel>();
@@ -118,6 +114,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetPendingByAgentId(long AgentId)
         {
             var requests = new List<ServiceRequestModel>();
@@ -161,6 +158,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetFollowUpByAgentId(long AgentId)
         {
             var requests = new List<ServiceRequestModel>();
@@ -203,6 +201,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetFollowUpByAgentCount(long AgentId)
         {
             var count = 0;
@@ -223,6 +222,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetFollowUpByBuyerCount(long BuyerId)
         {
             var count = 0;
@@ -245,6 +245,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetById(long Id, long? UserId)
         {
             ServiceRequest request = null;
@@ -314,6 +315,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetById(long Id)
         {
             ServiceRequest request = null;
@@ -378,8 +380,81 @@ namespace IVA.FindExpert.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize]
+        [AccessActionFilter]
+        public IHttpActionResult GetByQuoteId(long QuotationId, long? UserId)
+        {
+            ServiceRequest request = null;
+            ServiceRequestModel model = null;
+            IUser buyer = null;
+            IUserProfile buyerProfile = null;
+            RequestQuotation quote = null;
+
+            try
+            {
+                using (AppDBContext context = new AppDBContext())
+                {
+                    quote = new RequestQuotationRepository(context).GetById(QuotationId);
+                    request = quote.ServiceRequest;
+                    buyer = new UserRepository(context).GetByUserId(request.UserId);
+                    buyerProfile = new UserProfileRepository(context).GetByUserId(request.UserId);
+                    if (UserId != null)
+                        new AgentServiceRequestRepository(context).UpdateToPending(
+                            request.Id, UserId ?? 0);
+                }
+
+                if (request != null)
+                {
+                    model = new ServiceRequestModel
+                    {
+                        Id = request.Id,
+                        Code = request.Code,
+                        InsuranceTypeId = request.InsuranceTypeId,
+                        UserId = request.UserId,
+                        CreatedDate = request.TimeOccured.GetAdjustedTime().ToString("yyyy-MM-dd"),
+                        ClaimType = request.ClaimType,
+                        UsageType = request.UsageType,
+                        RegistrationCategory = request.RegistrationCategory,
+                        VehicleNo = request.VehicleNo,
+                        VehicleValue = request.VehicleValue,
+                        VehicleYear = request.VehicleYear,
+                        IsFinanced = request.IsFinanced,
+                        Status = request.Status,
+                        Location = request.Location == null ? String.Empty : request.Location,
+                        ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
+                        QuotationList = GetServiceQuotations(request.Id)
+                    };
+
+                    if (buyer != null)
+                    {
+                        model.BuyerName = buyer.Name;
+                        model.BuyerMobile = buyer.UserName;
+                        model.IsAllowPhone = true;
+
+                        if (buyerProfile != null)
+                        {
+                            model.BuyerName = buyerProfile.FirstName + " " + buyerProfile.LastName;
+                            model.BuyerPhone = buyerProfile.Phone;
+                            if (String.IsNullOrEmpty(model.Location))
+                                model.Location = buyerProfile.City;
+                            if (buyerProfile.ContactMethod == (int)Constant.ContactMethod.Message)
+                                model.IsAllowPhone = false;
+                        }
+                    }
+                }
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
+        }
+
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult Save(ServiceRequestModel Model)
         {
             ServiceRequest SR = new ServiceRequest();
@@ -396,6 +471,7 @@ namespace IVA.FindExpert.Controllers
             SR.VehicleYear = Model.VehicleYear;
             SR.IsFinanced = Model.IsFinanced;
             SR.Location = Model.Location;
+            SR.ClientType = Model.ClientType;
             //SR.Images = Model.Images;
 
             try
@@ -429,6 +505,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult PendingRequestCount(long AgentId)
         {
             long count = 0;
@@ -455,6 +532,12 @@ namespace IVA.FindExpert.Controllers
             using (AppDBContext context = new AppDBContext())
             {
                 quotes = new RequestQuotationRepository(context).GetByRequest(SRId);
+                var index = quotes.FindIndex(q => (q.Status ?? 0) == (int)Common.Constant.QuotationStatus.Accepted);
+                if(index > 0)
+                {
+                    quotes = quotes.Where(q => (q.Status ?? 0) == (int)Common.Constant.QuotationStatus.Accepted).Concat(
+                        quotes.Where(q => (q.Status ?? 0) != (int)Common.Constant.QuotationStatus.Accepted)).ToList();
+                }
 
                 if (quotes != null)
                 {                    
@@ -472,8 +555,8 @@ namespace IVA.FindExpert.Controllers
                         Status = q.Status ?? 0,
                         CompanyId = q.Agent.CompanyId ?? 0,
                         CompanyName = q.Agent.Company?.Name,
-                        QuotationText = q.QuotationTemplate.Body + " \n\n" + q.QuotationText
-
+                        QuotationText = q.QuotationText
+                        
                     }).ToList();
                 }
             }

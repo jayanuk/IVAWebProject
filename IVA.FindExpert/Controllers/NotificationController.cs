@@ -3,6 +3,7 @@ using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
 using IVA.FindExpert.Helpers;
+using IVA.FindExpert.Helpers.ActionFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace IVA.FindExpert.Controllers
     {
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetNotifications(long UserId)
         {
             List<Notification> notifications = null;
@@ -38,6 +40,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetNotificationsForList(long UserId, int Page)
         {
             List<Notification> notifications = null;
@@ -63,6 +66,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult Delete(NotificationListViewModel Notifications)
         {            
             try
@@ -83,6 +87,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult DeleteAll(long UserId)
         {
             try

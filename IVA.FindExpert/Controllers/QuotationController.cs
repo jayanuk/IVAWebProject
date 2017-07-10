@@ -3,6 +3,7 @@ using IVA.Common;
 using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
+using IVA.FindExpert.Helpers.ActionFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace IVA.FindExpert.Controllers
     {
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetById(long Id)
         {
             RequestQuotationViewModel model = null;
@@ -69,6 +71,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetByIdFromBuyer(long Id)
         {
             RequestQuotationViewModel model = null;
@@ -124,6 +127,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult Accept(long QuotationId)
         {
             try
@@ -148,8 +152,7 @@ namespace IVA.FindExpert.Controllers
                     var userRepo = new UserRepository(context);
                     var request = quote.ServiceRequest;
                     var buyerName = userRepo.GetName(request.UserId);
-                    request.Status = (int)Constant.ServiceRequestStatus.Closed;
-                    reqRepo.Update(request);
+                    reqRepo.UpdateSRStatus(request.Id, (int)Constant.ServiceRequestStatus.Closed);
 
                     MessageModel message = new MessageModel
                     {
@@ -179,6 +182,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult Save([FromBody] RequestQuotationViewModel model)
         {
             try
@@ -238,6 +242,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult AcceptByMessageThread(long ThreadId)
         {
             try
@@ -260,9 +265,8 @@ namespace IVA.FindExpert.Controllers
                     }
 
                     var reqRepo = new ServiceRequestRepository(context);
-                    var request = quote.ServiceRequest;
-                    request.Status = (int)Constant.ServiceRequestStatus.Closed;
-                    reqRepo.Update(request);
+                    var request = quote.ServiceRequest;                    
+                    reqRepo.UpdateSRStatus(request.Id, (int)Constant.ServiceRequestStatus.Closed);
                     var buyerName = new UserRepository(context).GetName(request.UserId);
                     MessageModel message = new MessageModel
                     {

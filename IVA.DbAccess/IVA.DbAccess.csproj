@@ -57,6 +57,7 @@
     <Compile Include="Repository\CityRepository.cs" />
     <Compile Include="Repository\CompanyRepository.cs" />
     <Compile Include="Repository\CustomerSupportTypeRepository.cs" />
+    <Compile Include="Repository\LoginHistoryRepository.cs" />
     <Compile Include="Repository\MessageRepository.cs" />
     <Compile Include="Repository\MessageThreadRepository.cs" />
     <Compile Include="Repository\NotificationRepository.cs" />

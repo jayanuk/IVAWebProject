@@ -3,6 +3,7 @@ using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
 using IVA.DTO.Contract;
+using IVA.FindExpert.Helpers.ActionFilters;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -17,6 +18,7 @@ namespace IVA.FindExpert.Controllers
     {
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetServiceCategories()
         {
             List<IServiceCategory> categories = null;
@@ -37,6 +39,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetServiceProviders(int CategoryId, double Longitude, double Latitude)
         {
             List<ServiceLocation> providers = null;

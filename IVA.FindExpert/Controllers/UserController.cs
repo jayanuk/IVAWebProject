@@ -3,6 +3,7 @@ using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
 using IVA.DTO.Contract;
+using IVA.FindExpert.Helpers.ActionFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace IVA.FindExpert.Controllers
     {
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult UpdateProfile(UserProfileModel model)
         {
             try
@@ -68,6 +70,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetProfileByUserId(long UserId)
         {
             IUserProfile profile = null;
@@ -113,6 +116,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult FeedBack(UserFeedbackModel Model)
         {
             var feedback = new UserFeedback();
@@ -146,6 +150,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult AddUserDevice(UserDeviceModel Model)
         {
             long ret = 0;

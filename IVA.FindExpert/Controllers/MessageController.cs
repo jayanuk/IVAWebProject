@@ -4,6 +4,7 @@ using IVA.DbAccess;
 using IVA.DbAccess.Repository;
 using IVA.DTO;
 using IVA.FindExpert.Helpers;
+using IVA.FindExpert.Helpers.ActionFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetThreadById(long ThreadId)
         {
             MessageThreadModel thread = null;
@@ -93,6 +95,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetThreadById(long ThreadId, long UserId)
         {
             MessageThreadModel thread = null;
@@ -183,6 +186,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetBuyerThreads(long UserId, int Page)
         {
             List<MessageThreadModel> threads = null;
@@ -286,6 +290,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult GetAgentThreads(long UserId, int Page)
         {
             List<MessageThreadModel> threads = null;
@@ -363,6 +368,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult AddThread(MessageThreadModel Model)
         {
             long id = 0;
@@ -392,6 +398,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpPost]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult AddMessage(MessageModel Model)
         {
             long Id = 0;
@@ -477,6 +484,7 @@ namespace IVA.FindExpert.Controllers
 
         [HttpGet]
         [Authorize]
+        [AccessActionFilter]
         public IHttpActionResult UnreadMessageCount(long UserId)
         {
             long count = 0;

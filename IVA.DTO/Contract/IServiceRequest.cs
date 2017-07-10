@@ -24,6 +24,7 @@ namespace IVA.DTO.Contract
         int Status { get; set; }
         bool? BuyerResponded { get; set; }
         string Location { get; set; }
+        int? ClientType { get; set; }
 
         List<VehicleImage> Images { get; set; }
         List<RequestQuotation> QuotationList { get; set; }

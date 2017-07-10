@@ -22,7 +22,7 @@ namespace IVA.DbAccess.Repository
             message.RecordId = RecordId;
             message.Title = Title;
             message.Text = Text;
-            message.Time = DateTime.Now;
+            message.Time = DateTime.UtcNow;
             message.Status = (int) Constant.MessageStatus.Initial;
             context.Notifications.Add(message);
             context.SaveChanges();

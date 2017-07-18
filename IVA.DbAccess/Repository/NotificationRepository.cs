@@ -81,5 +81,23 @@ namespace IVA.DbAccess.Repository
                        Take(Constant.Paging.NOTIFICATIONS_PER_PAGE).ToList();
             return notifications;
         }
+
+        public List<Notification> GetByUserListForWeb(long UserId)
+        {
+            var notifications = context.Notifications.Where(
+                n => n.RecieverId == UserId && !(n.IsDeleted ?? false) && !(n.IsVisited ?? false)
+                ).OrderByDescending(n => n.Time).ToList();
+            return notifications;
+        }
+
+        public void UpdateToVisited(long Id)
+        {
+            var notification = context.Notifications.Where(n => n.Id == Id).FirstOrDefault();
+            if (notification != null)
+            {
+                notification.IsVisited = true;
+                context.SaveChanges();
+            }
+        }
     }
 }

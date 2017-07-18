@@ -28,6 +28,7 @@ namespace IVA.DbAccess.Repository
                 Mobile = Profile.Mobile,
                 FirstName = Profile.FirstName,
                 LastName = Profile.LastName,
+                Gender= Profile.Gender,
                 Email = Profile.Email,
                 Image = Profile.Image,
                 Street = Profile.Street,
@@ -52,6 +53,7 @@ namespace IVA.DbAccess.Repository
             UserProfile profile = context.UserProfiles.Where(p => p.UserId == Profile.UserId).FirstOrDefault();
             profile.FirstName = Profile.FirstName;
             profile.LastName = Profile.LastName;
+            profile.Gender = Profile.Gender;
             profile.Phone = Profile.Phone;
             profile.Mobile = Profile.Mobile;
             profile.Email = Profile.Email;

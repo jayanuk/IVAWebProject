@@ -105,5 +105,52 @@ namespace IVA.FindExpert.Controllers
                 return InternalServerError();
             }
         }
+
+        [HttpGet]
+        [Authorize]
+        [AccessActionFilter]
+        public IHttpActionResult GetNotificationsListForWeb(long UserId)
+        {
+            List<Notification> notifications = null;
+            try
+            {
+                using (AppDBContext context = new AppDBContext())
+                {
+                    var repo = new NotificationRepository(context);
+                    notifications = repo.GetByUserListForWeb(UserId);
+                    if (notifications != null)
+                        notifications.ForEach(
+                            n => n.DisplayTime =
+                            n.Time.GetAdjustedTime().ToString(Common.Constant.DateFormatType.DateWithTime));
+                }
+                return Ok(notifications);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(NotificationController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [AccessActionFilter]
+        public IHttpActionResult UpdateToVisited(long Id)
+        {
+            try
+            {
+                using (AppDBContext context = new AppDBContext())
+                {
+                    var repo = new NotificationRepository(context);
+                    repo.UpdateToVisited(Id);
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(typeof(NotificationController), ex.Message + ex.StackTrace, LogType.ERROR);
+                return InternalServerError();
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace IVA.DTO
         public int Status { get; set; }
         public DateTime Time { get; set; }
         public bool? IsDeleted { get; set; }
+        public bool? IsVisited { get; set; }
         [NotMapped]
         public string DisplayTime { get; set; }
     }

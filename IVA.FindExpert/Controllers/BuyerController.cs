@@ -90,6 +90,7 @@ namespace IVA.FindExpert.Controllers
                         var loginHistoryRepo = new LoginHistoryRepository(context);
                         var curUser = userRepo.GetByUserName(user.UserName);
                         user.PasswordValidated = true;
+                        user.Name = pass.Name;
 
                         if (curUser != null)
                         {
@@ -101,8 +102,7 @@ namespace IVA.FindExpert.Controllers
 
                             user.Id = curUser.Id;
                             user.LoginId = curUser.LoginId;
-                            user.Password = pass.Code;
-                            user.Name = curUser.Name;
+                            user.Password = pass.Code;                           
                             user.ModifiedDate = DateTime.Now.ToUniversalTime();
                             user.IsActive = true;
                             userRepo.Update(user);                            

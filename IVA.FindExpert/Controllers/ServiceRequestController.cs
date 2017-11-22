@@ -632,8 +632,9 @@ namespace IVA.FindExpert.Controllers
                     }
                 }
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
+                Logger.Log(typeof(ServiceRequestController), ex.Message + ex.StackTrace, LogType.ERROR);
             }
         }
     }

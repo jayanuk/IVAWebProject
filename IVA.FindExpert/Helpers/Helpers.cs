@@ -20,7 +20,7 @@ public class Utility
 
     public static async Task SendCode(string Phone, string Code)
     { 
-        string message = "FindExpert \n Your verification Code: " + Code;
+        string message = "SOLK - Service Outfitter for Sri Lanka  \n Your verification Code: " + Code;
         await SendMessage(Phone, message);
     }
 

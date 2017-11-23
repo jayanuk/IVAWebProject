@@ -585,7 +585,7 @@ namespace IVA.FindExpert.Controllers
                             //get agents for each company
                             var agents = new UserRepository(context).GetAgentsByCompany(company.Id);
 
-                            if (agents == null)
+                            if (agents == null || agents.Count == 0)
                                 continue;
 
                             Dictionary<long, int> counts = new Dictionary<long, int>();

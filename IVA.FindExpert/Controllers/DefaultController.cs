@@ -34,7 +34,7 @@ namespace IVA.FindExpert.Controllers.WebAPI
             //ServiceRequestController.AssignRequestToAgents(5);
             //NotificationHelper.GCMNotification("ejV8j1Ife04:APA91bGctCxqnIX3xJmsWrOqnO8b_H8h8L9LFpfXQ_-Eigk-SYQko2h5E6sUge0AHSzPraQzBdQIy7UyH_I90YGB0hnB2E_6h1au_bp0OIrd6fGytuXsPWTnZCjbFDc3-pio7BkpNGbn", "Test Message");
            
-            long ServiceRequestId = 40219;
+            long ServiceRequestId = 1;
             try
             {
                 using (AppDBContext context = new AppDBContext())
@@ -54,7 +54,7 @@ namespace IVA.FindExpert.Controllers.WebAPI
                             //get agents for each company
                             var agents = new UserRepository(context).GetAgentsByCompany(company.Id);
 
-                            if (agents == null)
+                            if (agents == null || agents.Count == 0)
                                 continue;
 
                             Dictionary<long, int> counts = new Dictionary<long, int>();

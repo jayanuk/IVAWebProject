@@ -28,7 +28,7 @@ namespace IVA.FindExpert.Controllers
                 using (AppDBContext context = new AppDBContext())
                 {
                     var userRepo = new UserRepository(context);
-                    curUser = userRepo.GetByUserNameAndPasswordSeller(request.Phone, request.Password);
+                    curUser = userRepo.GetAgentByUserNameAndPassword(request.Phone, request.Password);
 
                     if (curUser != null)
                     {

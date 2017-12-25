@@ -35,6 +35,10 @@ namespace IVA.FindExpert.Controllers
 
                 using (AppDBContext context = new AppDBContext())
                 {
+                    var existingUser = new UserRepository(context).GetAgentByUserName(request.Phone);
+                    if (existingUser != null)
+                        return InternalServerError();
+
                     var repo = new UserPasscodeRepository(context);
                     repo.Add(passCode);
                 }

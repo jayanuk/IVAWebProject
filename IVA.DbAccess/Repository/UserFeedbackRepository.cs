@@ -18,7 +18,7 @@ namespace IVA.DbAccess.Repository
         {
             UserFeedback feedback = new UserFeedback
             {
-                UserId = Feedback.Id,
+                UserId = Feedback.UserId,
                 Description = Feedback.Description,
                 Date = Feedback.Date,
                 Rating = Feedback.Rating

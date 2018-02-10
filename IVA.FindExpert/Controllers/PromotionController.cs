@@ -57,16 +57,20 @@ namespace IVA.FindExpert.Controllers
                 using (AppDBContext context = new AppDBContext())
                 {
                     var p = new PromotionRepository(context).GetPromotionById(Id);
-                    promotion = new PromotionModel
+
+                    if (p != null)
                     {
-                        Id = p.Id,
-                        Title = p.Title,
-                        Header = p.Header,
-                        Description = p.Description,
-                        CreatedDate = p.CreatedDate?.ToString(Constant.DateFormatType.YYYYMMDD),
-                        Status = p.Status ?? 0,
-                        Type = ((p.Type ?? 0) == Constant.PromotionType.OFFER) ? "Offers" : "Promotions"
-                    };
+                        promotion = new PromotionModel
+                        {
+                            Id = p.Id,
+                            Title = p.Title,
+                            Header = p.Header,
+                            Description = p.Description,
+                            CreatedDate = p.CreatedDate?.ToString(Constant.DateFormatType.YYYYMMDD),
+                            Status = p.Status ?? 0,
+                            Type = ((p.Type ?? 0) == Constant.PromotionType.OFFER) ? "Offers" : "Promotions"
+                        };
+                    }
                 }
             }
             catch (Exception ex)
@@ -89,16 +93,20 @@ namespace IVA.FindExpert.Controllers
                 using (AppDBContext context = new AppDBContext())
                 {
                     var p = new PromotionRepository(context).GetLatestPromotion(Type);
-                    promotion = new PromotionModel
+
+                    if (p != null)
                     {
-                        Id = p.Id,
-                        Title = p.Title,
-                        Header = p.Header,
-                        Description = p.Description,
-                        CreatedDate = p.CreatedDate?.ToString(Constant.DateFormatType.YYYYMMDD),
-                        Status = p.Status ?? 0,
-                        Type = ((p.Type ?? 0) == Constant.PromotionType.OFFER) ? "Offers" : "Promotions"
-                    };
+                        promotion = new PromotionModel
+                        {
+                            Id = p.Id,
+                            Title = p.Title,
+                            Header = p.Header,
+                            Description = p.Description,
+                            CreatedDate = p.CreatedDate?.ToString(Constant.DateFormatType.YYYYMMDD),
+                            Status = p.Status ?? 0,
+                            Type = ((p.Type ?? 0) == Constant.PromotionType.OFFER) ? "Offers" : "Promotions"
+                        };
+                    }
                 }
             }
             catch (Exception ex)

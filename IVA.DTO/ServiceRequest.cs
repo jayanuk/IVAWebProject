@@ -26,6 +26,7 @@ namespace IVA.DTO
         public bool? BuyerResponded { get; set; }
         public string Location { get; set; }
         public int? ClientType { get; set; }
+        public int? FuelType { get; set; }
 
         virtual public List<VehicleImage> Images { get; set; }
         virtual public List<RequestQuotation> QuotationList { get; set; }

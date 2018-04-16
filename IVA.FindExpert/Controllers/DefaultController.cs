@@ -27,7 +27,7 @@ namespace IVA.FindExpert.Controllers.WebAPI
 {
     public class DefaultController : BaseController
     {
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         public IHttpActionResult Test()
         {

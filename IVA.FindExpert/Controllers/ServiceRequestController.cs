@@ -45,6 +45,7 @@ namespace IVA.FindExpert.Controllers
                             VehicleYear = i.VehicleYear,
                             IsFinanced = i.IsFinanced,
                             Status = i.Status,
+                            FuelType = i.FuelType ?? 0,
                             ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                             QuotationList = GetServiceQuotations(i.Id)
                         }).ToList();
@@ -96,6 +97,7 @@ namespace IVA.FindExpert.Controllers
                             VehicleYear = i.VehicleYear,
                             IsFinanced = i.IsFinanced,
                             Status = i.Status,
+                            FuelType = i.FuelType ?? 0,
                             Location = i.Location == null ? String.Empty : i.Location,
                             ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                             QuotationList = GetServiceQuotations(i.Id)
@@ -142,6 +144,7 @@ namespace IVA.FindExpert.Controllers
                             VehicleYear = i.VehicleYear,
                             IsFinanced = i.IsFinanced,
                             Status = i.Status,
+                            FuelType = i.FuelType ?? 0,
                             Location = i.Location == null ? String.Empty : i.Location,
                             ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                             QuotationList = GetServiceQuotations(i.Id)
@@ -184,6 +187,7 @@ namespace IVA.FindExpert.Controllers
                             VehicleYear = i.VehicleYear,
                             IsFinanced = i.IsFinanced,
                             Status = i.Status,
+                            FuelType = i.FuelType ?? 0,
                             Location = i.Location == null ? String.Empty : i.Location,
                             ExpiryDate = i.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                             TimeToExpire = getTimeToExpire(i.TimeOccured),
@@ -282,6 +286,7 @@ namespace IVA.FindExpert.Controllers
                         VehicleYear = request.VehicleYear,
                         IsFinanced = request.IsFinanced,
                         Status = request.Status,
+                        FuelType = request.FuelType ?? 0,
                         Location = request.Location == null ? String.Empty : request.Location,
                         ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                         QuotationList = GetServiceQuotations(request.Id)                        
@@ -349,6 +354,7 @@ namespace IVA.FindExpert.Controllers
                         VehicleYear = request.VehicleYear,
                         IsFinanced = request.IsFinanced,
                         Status = request.Status,
+                        FuelType = request.FuelType ?? 0,
                         Location = request.Location == null ? String.Empty : request.Location,
                         ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                         QuotationList = GetServiceQuotations(request.Id)
@@ -421,6 +427,7 @@ namespace IVA.FindExpert.Controllers
                         VehicleYear = request.VehicleYear,
                         IsFinanced = request.IsFinanced,
                         Status = request.Status,
+                        FuelType = request.FuelType ?? 0,
                         Location = request.Location == null ? String.Empty : request.Location,
                         ExpiryDate = request.TimeOccured.GetAdjustedTime().AddDays(ConfigurationHelper.DAYS_TO_EXPIRE_REQUEST).ToString("yyyy-MM-dd"),
                         QuotationList = GetServiceQuotations(request.Id)
@@ -472,6 +479,7 @@ namespace IVA.FindExpert.Controllers
             SR.IsFinanced = Model.IsFinanced;
             SR.Location = Model.Location;
             SR.ClientType = Model.ClientType;
+            SR.FuelType = Model.FuelType;
             //SR.Images = Model.Images;
 
             try
@@ -555,7 +563,7 @@ namespace IVA.FindExpert.Controllers
                         Status = q.Status ?? 0,
                         CompanyId = q.Agent.CompanyId ?? 0,
                         CompanyName = q.Agent.Company?.Name,
-                        QuotationText = q.QuotationText
+                        QuotationText = q.QuotationText                      
                         
                     }).ToList();
                 }

@@ -86,6 +86,7 @@ public class ServiceRequestModel
     public string TimeToExpire { get; set; }
     public bool IsFollowUp { get; set; }
     public int? ClientType { get; set; }
+    public int? FuelType { get; set; }
 
     public List<RequestQuotationViewModel> QuotationList { get; set; }
     public List<VehicleImage> Images { get; set; }

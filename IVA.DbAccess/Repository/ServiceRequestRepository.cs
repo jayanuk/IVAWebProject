@@ -111,6 +111,7 @@ namespace IVA.DbAccess.Repository
             sr.IsFinanced = ServiceRequestInstance.IsFinanced;
             sr.Location = ServiceRequestInstance.Location;
             sr.ClientType = ServiceRequestInstance.ClientType;
+            sr.FuelType = ServiceRequestInstance.FuelType;
 
             context.ServiceRequests.Add(sr);
             context.SaveChanges();
@@ -134,6 +135,7 @@ namespace IVA.DbAccess.Repository
             sr.VehicleYear = ServiceRequestInstance.VehicleYear;
             sr.IsFinanced = ServiceRequestInstance.IsFinanced;
             sr.Location = ServiceRequestInstance.Location;
+            sr.FuelType = ServiceRequestInstance.FuelType;
             context.SaveChanges();
         }
 

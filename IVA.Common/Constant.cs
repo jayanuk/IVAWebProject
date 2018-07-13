@@ -37,6 +37,14 @@ namespace IVA.Common
             public const string DAYS_TO_EXPIRE_REQUEST = "REQUEST_EXPIRE_WINDOW";
             public const string HOURS_TO_FOLLOW_UP = "HOURS_TO_FOLLOW_UP";
             public const string NOTIFICATION_TITLE = "NOTIFICATION_TITLE";
+            public const string LOG_FILE_PATH = "LogFilePath";
+
+            public const string BellSMSURL = "BellSMSURL";
+            public const string BellSMSCompanyId = "BellSMSCompanyId";
+            public const string BellSMSPassword = "BellSMSPassword";
+
+            public const string SendUsingBell = "SendUsingBell";
+
         }
 
         public enum ServiceRequestStatus

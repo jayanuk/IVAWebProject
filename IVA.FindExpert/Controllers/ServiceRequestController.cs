@@ -491,9 +491,14 @@ namespace IVA.FindExpert.Controllers
                     {
                         SR.Id = repo.Add(SR);
                         AssignRequestToAgents(SR.Id);
+
+                        //Added temporary
+                        Utility.SendEmail("Request " + SR.Code + " Raised", SR.Code);
                     }
                     else
+                    {
                         repo.Update(SR);
+                    }
 
                     if (SR.Images != null)
                     {
